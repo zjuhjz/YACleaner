@@ -7,33 +7,61 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import android.content.Context;
 
-public class ProcessList extends Fragment {
+public class ProcessList extends ListFragment {
 
+	private static List<RunningAppProcessInfo> procList = null;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_process_list);
 	}
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_process_list, container, false);
-        //View tv = v.findViewById(R.id.text);
-        //((TextView)tv).setText("Fragment #" + mNum);
-        //tv.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.gallery_thumb));
-        return v;
+	@Override
+	public void  onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getProcessInfo();
+        showProcessInfo();
+	}
+	public void showProcessInfo() {
+		Context ctext= getActivity();
+        // 更新进程列表
+        List<HashMap<String,String>> infoList = new ArrayList<HashMap<String,String>>();
+        for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator.hasNext();) {
+            RunningAppProcessInfo procInfo = iterator.next();
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put("proc_name", procInfo.processName);
+            map.put("proc_id", procInfo.pid+"");
+            infoList.add(map);
+        }
+        
+        SimpleAdapter simpleAdapter = new SimpleAdapter(
+        		ctext, 
+                infoList, 
+                R.layout.process_list_item, 
+                new String[]{"proc_name"},
+                new int[]{R.id.process_name} );
+        setListAdapter(simpleAdapter);
     }
-
-	//@Override
-	/*public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_process_list, menu);
-		return true;
-	}*/
+	public int getProcessInfo() {
+		Context ctext= getActivity();
+        ActivityManager activityManager = (ActivityManager) ctext.getSystemService(Context.ACTIVITY_SERVICE);
+        procList = activityManager.getRunningAppProcesses();
+        return procList.size();
+	}
+	
 
 }
