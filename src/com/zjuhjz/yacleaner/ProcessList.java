@@ -36,6 +36,13 @@ public class ProcessList extends ListFragment {
         getProcessInfo();
         showProcessInfo();
 	}
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		//super.onCreateView(inflater, container, savedInstanceState);
+		View view=inflater.inflate(R.layout.activity_process_list, container,false);
+		return view;
+	}
 	public void showProcessInfo() {
 		Context ctext= getActivity();
         // 更新进程列表
@@ -49,7 +56,7 @@ public class ProcessList extends ListFragment {
         }
         
         SimpleAdapter simpleAdapter = new SimpleAdapter(
-        		ctext, 
+        		ctext,
                 infoList, 
                 R.layout.process_list_item, 
                 new String[]{"proc_name"},

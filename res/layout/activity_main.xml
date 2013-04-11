@@ -26,17 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/clean"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/cleanbtn"
-            ></Button>
-        </LinearLayout>
+        
     </LinearLayout>
 
 </android.support.v4.app.FragmentTabHost>
