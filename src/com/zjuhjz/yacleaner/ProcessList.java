@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
@@ -45,6 +46,7 @@ public class ProcessList extends ListFragment {
 	@Override 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem populateItem = menu.add(Menu.NONE, POPULATE_ID, 0, "Populate");
+        populateItem.setIcon(R.drawable.ic_menu_refresh);
         MenuItemCompat.setShowAsAction(populateItem, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         MenuItem clearItem = menu.add(Menu.NONE, CLEAR_ID, 0, "Clear");
         MenuItemCompat.setShowAsAction(clearItem, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
@@ -75,6 +77,8 @@ public class ProcessList extends ListFragment {
                 new String[]{"proc_name"},
                 new int[]{R.id.process_name} );
         setListAdapter(simpleAdapter);
+        TextView textview = (TextView)getView().findViewById(R.id.total_process_num);
+        textview.setText("Total Process Num:"+Integer.toString(infoList.size()));
     }
 	public int getProcessInfo() {
 		Context ctext= getActivity();
