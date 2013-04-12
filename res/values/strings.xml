@@ -6,5 +6,6 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_process_list">ProcessList</string>
     <string name="cleanbtn">一键清理</string>
+    <string name="nodata">No data</string>
 
 </resources>
