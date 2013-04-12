@@ -5,6 +5,8 @@ package com.zjuhjz.yacleaner;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v4.view.MenuItemCompat;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
@@ -24,7 +27,9 @@ import android.content.Context;
 public class ProcessList extends ListFragment {
 
 	private static List<RunningAppProcessInfo> procList = null;
-	
+	static final int POPULATE_ID = Menu.FIRST;
+    static final int CLEAR_ID = Menu.FIRST+1;
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,9 +38,17 @@ public class ProcessList extends ListFragment {
 	@Override
 	public void  onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
         getProcessInfo();
         showProcessInfo();
 	}
+	@Override 
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem populateItem = menu.add(Menu.NONE, POPULATE_ID, 0, "Populate");
+        MenuItemCompat.setShowAsAction(populateItem, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        MenuItem clearItem = menu.add(Menu.NONE, CLEAR_ID, 0, "Clear");
+        MenuItemCompat.setShowAsAction(clearItem, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+    }
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
