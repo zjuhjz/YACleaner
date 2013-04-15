@@ -30,6 +30,9 @@ import java.util.List;
 import android.content.ContentResolver;
 //import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 public class ProcessList extends ListFragment {
 
@@ -82,20 +85,31 @@ public class ProcessList extends ListFragment {
 	}
 
 	public void showProcessInfo() {
-		Context ctext = getActivity();
 		// 更新进程列表
+		Context ctext = getActivity();
+		final PackageManager pm = ctext.getApplicationContext().getPackageManager();
+		ApplicationInfo ai;
 		List<HashMap<String, String>> infoList = new ArrayList<HashMap<String, String>>();
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("proc_name", procInfo.processName);
+			map.put("pkg_name", procInfo.processName);
 			map.put("proc_id", procInfo.pid + "");
+			
+			try {
+			    ai = pm.getApplicationInfo( procInfo.processName, 0);
+			} catch (final NameNotFoundException e) {
+			    ai = null;
+			}
+			final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : procInfo.processName);
+			
+			map.put("app_name", applicationName);
 			infoList.add(map);
 		}
 
 		SimpleAdapter simpleAdapter = new SimpleAdapter(ctext, infoList,
-				R.layout.process_list_item, new String[] { "proc_name" },
+				R.layout.process_list_item, new String[] { "app_name" },
 				new int[] { R.id.process_name });
 		setListAdapter(simpleAdapter);
 		TextView textview = (TextView) getView().findViewById(
