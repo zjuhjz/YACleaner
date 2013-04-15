@@ -30,6 +30,9 @@ import java.util.List;
 import android.content.ContentResolver;
 //import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 public class ProcessList extends ListFragment {
 
@@ -83,13 +86,27 @@ public class ProcessList extends ListFragment {
 
 	public void showProcessInfo() {
 		Context ctext = getActivity();
+		final PackageManager pm = ctext.getPackageManager();
+		ApplicationInfo ai;
 		// 更新进程列表
 		List<HashMap<String, String>> infoList = new ArrayList<HashMap<String, String>>();
+		
+		
+		
+		
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("proc_name", procInfo.processName);
+			//map.put("proc_name", procInfo.processName);
+			try {
+			    ai = pm.getApplicationInfo(procInfo.processName, 0);
+			} catch (final NameNotFoundException e) {
+			    ai = null;
+			}
+			final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : procInfo.processName);
+			map.put("proc_name", applicationName);
+			
 			map.put("proc_id", procInfo.pid + "");
 			infoList.add(map);
 		}
@@ -102,7 +119,7 @@ public class ProcessList extends ListFragment {
 				R.id.total_process_num);
 		textview.setText("Total Process Num: "
 				+ Integer.toString(infoList.size()));
-	}
+	} 
 
 	public int getProcessInfo() {
 		Context ctext = getActivity();
