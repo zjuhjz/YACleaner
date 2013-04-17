@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
@@ -39,6 +41,7 @@ public class ProcessList extends ListFragment {
 	private static List<RunningAppProcessInfo> procList = null;
 	static final int POPULATE_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
+	List<HashMap<String, String>> infoList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -68,9 +71,21 @@ public class ProcessList extends ListFragment {
 		// super.onCreateView(inflater, container, savedInstanceState);
 		View view = inflater.inflate(R.layout.activity_process_list, container,
 				false);
-		return view;
+		final View button = view.findViewById(R.id.clean);
+	    button.setOnClickListener(
+	        new OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	            	killAllProcesses();
+	            	getProcessInfo();
+	            	showProcessInfo();
+	            }
+	        }
+	    );
+	    
+	    return view;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -83,17 +98,24 @@ public class ProcessList extends ListFragment {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public void killAllProcesses(){
+		Context ctext = getActivity();
+		ActivityManager activityManager = (ActivityManager) ctext.getSystemService(Context.ACTIVITY_SERVICE);
+		for(Iterator<HashMap<String, String>> iterator = infoList.iterator();iterator.hasNext();)
+		{
+			HashMap<String, String> processitem = iterator.next();
+			activityManager.killBackgroundProcesses(processitem.get("package_name"));
+		}
+	}
 
 	public void showProcessInfo() {
 		Context ctext = getActivity();
 		final PackageManager pm = ctext.getPackageManager();
 		ApplicationInfo ai;
 		// 更新进程列表
-		List<HashMap<String, String>> infoList = new ArrayList<HashMap<String, String>>();
-		
-		
-		
-		
+		infoList = new ArrayList<HashMap<String, String>>();
+			
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
@@ -106,7 +128,7 @@ public class ProcessList extends ListFragment {
 			}
 			final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : procInfo.processName);
 			map.put("proc_name", applicationName);
-			
+			map.put("package_name", procInfo.processName);
 			map.put("proc_id", procInfo.pid + "");
 			infoList.add(map);
 		}
