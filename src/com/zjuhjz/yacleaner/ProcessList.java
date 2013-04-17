@@ -110,37 +110,25 @@ public class ProcessList extends ListFragment {
 	}
 
 	public void showProcessInfo() {
-<<<<<<< HEAD
+
 		Context ctext = getActivity();
 		final PackageManager pm = ctext.getPackageManager();
 		ApplicationInfo ai;
 		// 更新进程列表
 		infoList = new ArrayList<HashMap<String, String>>();
 			
-=======
-		// 更新进程列表
-		Context ctext = getActivity();
-		final PackageManager pm = ctext.getApplicationContext().getPackageManager();
-		ApplicationInfo ai;
-		List<HashMap<String, String>> infoList = new ArrayList<HashMap<String, String>>();
->>>>>>> b0e1d2d337128647f8fc0c9bf89905b6847c62d8
+
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-<<<<<<< HEAD
 			//map.put("proc_name", procInfo.processName);
 			try {
 			    ai = pm.getApplicationInfo(procInfo.processName, 0);
 			} catch (final NameNotFoundException e) {
 			    ai = null;
 			}
-			final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : procInfo.processName);
-			map.put("proc_name", applicationName);
 			map.put("package_name", procInfo.processName);
-=======
-			map.put("pkg_name", procInfo.processName);
->>>>>>> b0e1d2d337128647f8fc0c9bf89905b6847c62d8
 			map.put("proc_id", procInfo.pid + "");
 			
 			try {
