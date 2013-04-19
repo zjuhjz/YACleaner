@@ -20,6 +20,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 public class ProcessList extends ListFragment {
 
 	private static List<RunningAppProcessInfo> procList = null;
+	private static MemoryInfo mi = new MemoryInfo();
 	static final int POPULATE_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
 	List<HashMap<String, String>> infoList;
@@ -63,7 +65,7 @@ public class ProcessList extends ListFragment {
 		populateItem.setIcon(R.drawable.ic_menu_refresh);
 		MenuItemCompat.setShowAsAction(populateItem,
 				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-	}
+	} 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,7 +95,6 @@ public class ProcessList extends ListFragment {
 			getProcessInfo();
 			showProcessInfo();
 			return true;
-
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -116,8 +117,7 @@ public class ProcessList extends ListFragment {
 		ApplicationInfo ai;
 		// 更新进程列表
 		infoList = new ArrayList<HashMap<String, String>>();
-			
-
+		//process List
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
@@ -146,10 +146,15 @@ public class ProcessList extends ListFragment {
 				R.layout.process_list_item, new String[] { "app_name" },
 				new int[] { R.id.process_name });
 		setListAdapter(simpleAdapter);
+		long availableMegs = mi.availMem / 1048576L;
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
+		
 		textview.setText("Total Process Num: "
-				+ Integer.toString(infoList.size()));
+				+ Integer.toString(infoList.size())+"\nfree RAM:"+availableMegs+" MB");
+		//total ram status
+		
+		//long totalMegs = mi.totalMem / 1048576L;
 	} 
 
 	public int getProcessInfo() {
@@ -157,6 +162,7 @@ public class ProcessList extends ListFragment {
 		ActivityManager activityManager = (ActivityManager) ctext
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		procList = activityManager.getRunningAppProcesses();
+		activityManager.getMemoryInfo(mi);
 		return procList.size();
 	}
 
