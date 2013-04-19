@@ -4,6 +4,7 @@ package com.zjuhjz.yacleaner;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +38,8 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
+import com.zjuhjz.yacleaner.tool.*;
 
 public class ProcessList extends ListFragment {
 
@@ -65,7 +69,7 @@ public class ProcessList extends ListFragment {
 		populateItem.setIcon(R.drawable.ic_menu_refresh);
 		MenuItemCompat.setShowAsAction(populateItem,
 				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-	} 
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,20 +78,18 @@ public class ProcessList extends ListFragment {
 		View view = inflater.inflate(R.layout.activity_process_list, container,
 				false);
 		final View button = view.findViewById(R.id.clean);
-	    button.setOnClickListener(
-	        new OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
-	            	killAllProcesses();
-	            	getProcessInfo();
-	            	showProcessInfo();
-	            }
-	        }
-	    );
-	    
-	    return view;
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				killAllProcesses();
+				getProcessInfo();
+				showProcessInfo();
+			}
+		});
+
+		return view;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -99,14 +101,16 @@ public class ProcessList extends ListFragment {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	public void killAllProcesses(){
+
+	public void killAllProcesses() {
 		Context ctext = getActivity();
-		ActivityManager activityManager = (ActivityManager) ctext.getSystemService(Context.ACTIVITY_SERVICE);
-		for(Iterator<HashMap<String, String>> iterator = infoList.iterator();iterator.hasNext();)
-		{
+		ActivityManager activityManager = (ActivityManager) ctext
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		for (Iterator<HashMap<String, String>> iterator = infoList.iterator(); iterator
+				.hasNext();) {
 			HashMap<String, String> processitem = iterator.next();
-			activityManager.killBackgroundProcesses(processitem.get("package_name"));
+			activityManager.killBackgroundProcesses(processitem
+					.get("package_name"));
 		}
 	}
 
@@ -114,30 +118,31 @@ public class ProcessList extends ListFragment {
 
 		Context ctext = getActivity();
 		final PackageManager pm = ctext.getPackageManager();
+		CMDExecute cmdexe = new CMDExecute();
 		ApplicationInfo ai;
 		// 更新进程列表
 		infoList = new ArrayList<HashMap<String, String>>();
-		//process List
+		// process List
 		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-			//map.put("proc_name", procInfo.processName);
+			// map.put("proc_name", procInfo.processName);
 			try {
-			    ai = pm.getApplicationInfo(procInfo.processName, 0);
+				ai = pm.getApplicationInfo(procInfo.processName, 0);
 			} catch (final NameNotFoundException e) {
-			    ai = null;
+				ai = null;
 			}
 			map.put("package_name", procInfo.processName);
 			map.put("proc_id", procInfo.pid + "");
-			
 			try {
-			    ai = pm.getApplicationInfo( procInfo.processName, 0);
+				ai = pm.getApplicationInfo(procInfo.processName, 0);
 			} catch (final NameNotFoundException e) {
-			    ai = null;
+				ai = null;
 			}
-			final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : procInfo.processName);
-			
+			final String applicationName = (String) (ai != null ? pm
+					.getApplicationLabel(ai) : procInfo.processName);
+
 			map.put("app_name", applicationName);
 			infoList.add(map);
 		}
@@ -149,13 +154,23 @@ public class ProcessList extends ListFragment {
 		long availableMegs = mi.availMem / 1048576L;
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
-		
+
 		textview.setText("Total Process Num: "
-				+ Integer.toString(infoList.size())+"\nfree RAM:"+availableMegs+" MB");
-		//total ram status
+				+ Integer.toString(infoList.size()) + "\nfree RAM:"
+				+ availableMegs + " MB");
+		// total ram status
+		String result = null;
 		
-		//long totalMegs = mi.totalMem / 1048576L;
-	} 
+		try {
+			String[] args = { "/system/bin/cat", "/proc/meminfo" };
+			result = cmdexe.run(args, "/system/bin/");
+			Log.i("result", "result=" + result);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		textview.setText(result);
+		// long totalMegs = mi.totalMem / 1048576L;
+	}
 
 	public int getProcessInfo() {
 		Context ctext = getActivity();
