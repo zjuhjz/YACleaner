@@ -18,7 +18,7 @@ public class YAMemoryInfo {
 	public long totalMemory;
 	public long totalUsed;
 	
-	private static List<RunningAppProcessInfo> procList = null;
+	private static List<RunningAppProcessInfo> runningAppProcesses = null;
 	private static MemoryInfo mi = new MemoryInfo();
 	//static final int POPULATE_ID = Menu.FIRST;
 	//static final int CLEAR_ID = Menu.FIRST + 1;
@@ -47,21 +47,30 @@ public class YAMemoryInfo {
 		//PackageManager pm
 		PackageManager pm = context.getPackageManager();
 		
+		/////////initialize///////////
 		//ActivityManager activityManager
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
+		//clear
+		if(runningAppProcesses!=null){
+			runningAppProcesses.clear();
+		}
+		if(processInfoList!=null){
+			processInfoList.clear();
+		}
+			
+		runningAppProcesses = activityManager.getRunningAppProcesses();
+		///////initialize end/////////
 		
-		procList = activityManager.getRunningAppProcesses();
+		
 		//get Memory info
 		//activityManager.getMemoryInfo(mi);
 		
 		//add info to processInfoList
-		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
+		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses.iterator(); iterator
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-			// map.put("proc_name", procInfo.processName);
-
 			
 			map.put("package_name", procInfo.processName);
 			map.put("proc_id", procInfo.pid + "");
@@ -81,7 +90,7 @@ public class YAMemoryInfo {
 		}
 		
 		
-		return procList.size();
+		return runningAppProcesses.size();
 	}
 	
 }
