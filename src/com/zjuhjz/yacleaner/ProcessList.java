@@ -29,11 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-//import com.example.android.supportv4.app.LoaderThrottleSupport.MainTable;
-
 import android.content.ContentResolver;
-//import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -41,13 +37,14 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.zjuhjz.yacleaner.tool.*;
 
+
 public class ProcessList extends ListFragment {
 
 	private static List<RunningAppProcessInfo> procList = null;
 	private static MemoryInfo mi = new MemoryInfo();
+	YAMemoryInfo yaMemoryInfo;
 	static final int POPULATE_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
-	List<HashMap<String, String>> infoList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +56,7 @@ public class ProcessList extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
+		yaMemoryInfo = new YAMemoryInfo(getActivity());
 		getProcessInfo();
 		showProcessInfo();
 	}
@@ -103,10 +101,10 @@ public class ProcessList extends ListFragment {
 	}
 
 	public void killAllProcesses() {
-		Context ctext = getActivity();
-		ActivityManager activityManager = (ActivityManager) ctext
+		Context context = getActivity();
+		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
-		for (Iterator<HashMap<String, String>> iterator = infoList.iterator(); iterator
+		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList.iterator(); iterator
 				.hasNext();) {
 			HashMap<String, String> processitem = iterator.next();
 			activityManager.killBackgroundProcesses(processitem
@@ -116,59 +114,34 @@ public class ProcessList extends ListFragment {
 
 	public void showProcessInfo() {
 
-		Context ctext = getActivity();
-		final PackageManager pm = ctext.getPackageManager();
-		CMDExecute cmdexe = new CMDExecute();
-		ApplicationInfo ai;
-		// 更新进程列表
-		infoList = new ArrayList<HashMap<String, String>>();
-		// process List
-		for (Iterator<RunningAppProcessInfo> iterator = procList.iterator(); iterator
-				.hasNext();) {
-			RunningAppProcessInfo procInfo = iterator.next();
-			HashMap<String, String> map = new HashMap<String, String>();
-			// map.put("proc_name", procInfo.processName);
-			try {
-				ai = pm.getApplicationInfo(procInfo.processName, 0);
-			} catch (final NameNotFoundException e) {
-				ai = null;
-			}
-			map.put("package_name", procInfo.processName);
-			map.put("proc_id", procInfo.pid + "");
-			try {
-				ai = pm.getApplicationInfo(procInfo.processName, 0);
-			} catch (final NameNotFoundException e) {
-				ai = null;
-			}
-			final String applicationName = (String) (ai != null ? pm
-					.getApplicationLabel(ai) : procInfo.processName);
-
-			map.put("app_name", applicationName);
-			infoList.add(map);
-		}
-
-		SimpleAdapter simpleAdapter = new SimpleAdapter(ctext, infoList,
+		Context context = getActivity();
+		YAMemoryInfo yaMemoryInfo = new YAMemoryInfo(context);
+		yaMemoryInfo.refresh();
+		
+		//TODO improve "string from"
+		SimpleAdapter simpleAdapter = new SimpleAdapter(context, yaMemoryInfo.processInfoList,
 				R.layout.process_list_item, new String[] { "app_name" },
 				new int[] { R.id.process_name });
+		
 		setListAdapter(simpleAdapter);
 		long availableMegs = mi.availMem / 1048576L;
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
 
 		textview.setText("Total Process Num: "
-				+ Integer.toString(infoList.size()) + "\nfree RAM:"
+				+ Integer.toString(yaMemoryInfo.processInfoList.size()) + "\nfree RAM:"
 				+ availableMegs + " MB");
 		// total ram status
 		String result = null;
 		
-		try {
-			String[] args = { "/system/bin/cat", "/proc/meminfo" };
-			result = cmdexe.run(args, "/system/bin/");
-			Log.i("result", "result=" + result);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		textview.setText(result);
+//		try {
+//			String[] args = { "/system/bin/cat", "/proc/meminfo" };
+//			result = cmdexe.run(args, "/system/bin/");
+//			Log.i("result", "result=" + result);
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+		//textview.setText(result);
 		// long totalMegs = mi.totalMem / 1048576L;
 	}
 
