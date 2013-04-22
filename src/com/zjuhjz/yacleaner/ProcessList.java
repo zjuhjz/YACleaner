@@ -39,7 +39,7 @@ import com.zjuhjz.yacleaner.tool.*;
 
 
 public class ProcessList extends ListFragment {
-
+	private static final String TAG = "yacleanerlog";
 	private static List<RunningAppProcessInfo> procList = null;
 	private static MemoryInfo mi = new MemoryInfo();
 	YAMemoryInfo yaMemoryInfo;
@@ -102,20 +102,24 @@ public class ProcessList extends ListFragment {
 
 	public void killAllProcesses() {
 		Context context = getActivity();
+		Log.d(TAG, "begin");
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
+		HashMap<String, String> processitem;
 		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList.iterator(); iterator
 				.hasNext();) {
-			HashMap<String, String> processitem = iterator.next();
+			processitem = iterator.next();
+			Log.d(TAG, "kill "+processitem
+					.get("package_name"));
 			activityManager.killBackgroundProcesses(processitem
 					.get("package_name"));
 		}
 	}
 
 	public void showProcessInfo() {
-
+		
+		//initial and refresh memoryinfo
 		Context context = getActivity();
-		YAMemoryInfo yaMemoryInfo = new YAMemoryInfo(context);
 		yaMemoryInfo.refresh();
 		
 		//TODO improve "string from"
