@@ -67,7 +67,8 @@ public class YAMemoryInfo {
 		String result = null;
 		String[] items = null; 
 		try {
-			String[] args = { "/system/bin/top", "-n","1" };
+			//String[] args = { "/system/bin/top", "-n","1" };
+			String[] args = { "/system/bin/ps"};
 			result = cmdExecute.run(args, ".");
 			//Log.d("yacleanerdebug", "result=" + result);
 		} catch (IOException ex) {
@@ -83,7 +84,7 @@ public class YAMemoryInfo {
 			//Log.d("yacleanerdebug",Integer.toString(i)+item);
 			item2=item.trim().split("\\s+");
 			if(item2.length>6){
-				Log.d("yacleanerdebug",item2[5]);
+				Log.d("yacleanerdebug",item2[4]);
 			}
 		}
 		
@@ -108,11 +109,9 @@ public class YAMemoryInfo {
 			final String applicationName = (String) (ai != null ? pm
 					.getApplicationLabel(ai) : procInfo.processName);
 			map.put("app_name", applicationName);
-			
 			//end
 			processInfoList.add(map);
 		}
-				
 		return runningAppProcesses.size();
 	}
 	
