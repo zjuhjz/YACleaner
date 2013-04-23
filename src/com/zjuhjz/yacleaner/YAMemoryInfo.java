@@ -1,5 +1,6 @@
 package com.zjuhjz.yacleaner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +13,9 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.util.Log;
 import android.view.Menu;
+import com.zjuhjz.yacleaner.tool.*;
 
 public class YAMemoryInfo {
 	public long totalMemory;
@@ -25,20 +28,20 @@ public class YAMemoryInfo {
 	Context context;
 	List<HashMap<String, String>> processInfoList;
 	List<HashMap<String, String>> servicesInfoList;
+	CMDExecute cmdExecute= new CMDExecute();
 	
 	YAMemoryInfo(Context context){
 		processInfoList = new ArrayList<HashMap<String, String>>();
 		servicesInfoList = new ArrayList<HashMap<String, String>>();
 		this.context = context;
+		refresh();
 	}
 	
 	public boolean refresh(){
 		refreshProcessInfo();
 		
-		
 		return true;
 	}
-	
 	
 	public int refreshProcessInfo() {
 		//ApplicationInfo ai
@@ -61,7 +64,28 @@ public class YAMemoryInfo {
 			
 		runningAppProcesses = activityManager.getRunningAppProcesses();
 		///////initialize end/////////
-		
+		String result = null;
+		String[] items = null; 
+		try {
+			String[] args = { "/system/bin/top", "-n","1" };
+			result = cmdExecute.run(args, ".");
+			//Log.d("yacleanerdebug", "result=" + result);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		if(result!=null&&!result.isEmpty()){
+			items = result.split("\n");
+		}
+		int i = 0;
+		String [] item2;
+		for(String item:items){
+			i++;
+			//Log.d("yacleanerdebug",Integer.toString(i)+item);
+			item2=item.trim().split("\\s+");
+			if(item2.length>6){
+				Log.d("yacleanerdebug",item2[5]);
+			}
+		}
 		
 		//get Memory info
 		//activityManager.getMemoryInfo(mi);
@@ -88,9 +112,9 @@ public class YAMemoryInfo {
 			//end
 			processInfoList.add(map);
 		}
-		
-		
+				
 		return runningAppProcesses.size();
 	}
+	
 	
 }
