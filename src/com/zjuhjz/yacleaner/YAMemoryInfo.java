@@ -50,6 +50,9 @@ public class YAMemoryInfo {
 		//PackageManager pm
 		PackageManager pm = context.getPackageManager();
 		
+		//memory usage
+		HashMap<String,String> memoryUsage = new HashMap<String,String>();
+		
 		/////////initialize///////////
 		//ActivityManager activityManager
 		ActivityManager activityManager = (ActivityManager) context
@@ -84,8 +87,10 @@ public class YAMemoryInfo {
 			//Log.d("yacleanerdebug",Integer.toString(i)+item);
 			item2=item.trim().split("\\s+");
 			if(item2.length>8){
-				Log.d("yacleanerdebug",item2[8]+" : "+item2[4]);
+				//Log.d("yacleanerdebug",item2[8]+" : "+item2[4]);
+				memoryUsage.put(item2[8],  Integer.toString(Integer.parseInt(item2[4])/1024));
 			}
+			
 		}
 		
 		//get Memory info
@@ -103,10 +108,10 @@ public class YAMemoryInfo {
 			}
 			final String applicationName = (String) (ai != null ? pm
 					.getApplicationLabel(ai) : procInfo.processName);
-			
 			map.put("app_name", applicationName);
 			map.put("package_name", procInfo.processName);
-			map.put("pid", procInfo.pid + "");
+			map.put("pid", procInfo.pid+"");
+			map.put("memory_usage", memoryUsage.get(procInfo.processName)+"MB");
 			processInfoList.add(map);
 		}
 		return runningAppProcesses.size();

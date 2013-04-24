@@ -124,8 +124,8 @@ public class ProcessList extends ListFragment {
 		
 		//TODO improve "string from"
 		SimpleAdapter simpleAdapter = new SimpleAdapter(context, yaMemoryInfo.processInfoList,
-				R.layout.process_list_item, new String[] { "app_name" },
-				new int[] { R.id.process_name});
+				R.layout.process_list_item, new String[] { "app_name","memory_usage" },
+				new int[] { R.id.process_name,R.id.process_memory});
 		
 		setListAdapter(simpleAdapter);
 		long availableMegs = mi.availMem / 1048576L;
@@ -138,15 +138,6 @@ public class ProcessList extends ListFragment {
 		// total ram status
 		String result = null;
 		
-//		try {
-//			String[] args = { "/system/bin/cat", "/proc/meminfo" };
-//			result = cmdexe.run(args, "/system/bin/");
-//			Log.i("result", "result=" + result);
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-		//textview.setText(result);
-		// long totalMegs = mi.totalMem / 1048576L;
 	}
 
 	public int getProcessInfo() {

@@ -11,11 +11,9 @@
     <TextView android:id="@+id/process_name" 
        android:layout_width="wrap_content" 
        android:layout_height="wrap_content"
-       android:layout_marginLeft="10dp" 
-       android:textColor="#0099CC"/>
+       android:layout_marginLeft="10dp"/>
     <TextView android:id="@+id/process_memory" 
        android:layout_width="wrap_content" 
        android:layout_height="wrap_content"
-       android:layout_marginLeft="10dp" 
-       android:textColor="#0099CC"/>
+       android:layout_marginLeft="10dp" />
 </LinearLayout>
