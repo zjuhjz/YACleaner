@@ -67,7 +67,7 @@ public class YAMemoryInfo {
 		String result = null;
 		String[] items = null; 
 		try {
-			//String[] args = { "/system/bin/top", "-n","1" };
+			//String[] args = { "/system/bin/ps", "-n","1" };
 			String[] args = { "/system/bin/ps"};
 			result = cmdExecute.run(args, ".");
 			//Log.d("yacleanerdebug", "result=" + result);
@@ -83,8 +83,8 @@ public class YAMemoryInfo {
 			i++;
 			//Log.d("yacleanerdebug",Integer.toString(i)+item);
 			item2=item.trim().split("\\s+");
-			if(item2.length>6){
-				Log.d("yacleanerdebug",item2[4]);
+			if(item2.length>8){
+				Log.d("yacleanerdebug",item2[8]+" : "+item2[4]);
 			}
 		}
 		
@@ -96,11 +96,6 @@ public class YAMemoryInfo {
 				.hasNext();) {
 			RunningAppProcessInfo procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
-			
-			map.put("package_name", procInfo.processName);
-			map.put("proc_id", procInfo.pid + "");
-			
-			//get app_name through pm with process name;
 			try {
 				ai = pm.getApplicationInfo(procInfo.processName, 0);
 			} catch (final NameNotFoundException e) {
@@ -108,8 +103,10 @@ public class YAMemoryInfo {
 			}
 			final String applicationName = (String) (ai != null ? pm
 					.getApplicationLabel(ai) : procInfo.processName);
+			
 			map.put("app_name", applicationName);
-			//end
+			map.put("package_name", procInfo.processName);
+			map.put("pid", procInfo.pid + "");
 			processInfoList.add(map);
 		}
 		return runningAppProcesses.size();

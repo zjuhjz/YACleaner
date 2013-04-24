@@ -125,7 +125,7 @@ public class ProcessList extends ListFragment {
 		//TODO improve "string from"
 		SimpleAdapter simpleAdapter = new SimpleAdapter(context, yaMemoryInfo.processInfoList,
 				R.layout.process_list_item, new String[] { "app_name" },
-				new int[] { R.id.process_name });
+				new int[] { R.id.process_name});
 		
 		setListAdapter(simpleAdapter);
 		long availableMegs = mi.availMem / 1048576L;

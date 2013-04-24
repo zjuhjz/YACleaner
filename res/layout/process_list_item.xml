@@ -5,9 +5,15 @@
    android:layout_width="wrap_content" 
    android:paddingBottom="5dp"
    android:paddingTop="5dp" 
-   android:paddingLeft="5dp">
+   android:paddingLeft="5dp"
+   android:orientation="horizontal">
 
     <TextView android:id="@+id/process_name" 
+       android:layout_width="wrap_content" 
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="10dp" 
+       android:textColor="#0099CC"/>
+    <TextView android:id="@+id/process_memory" 
        android:layout_width="wrap_content" 
        android:layout_height="wrap_content"
        android:layout_marginLeft="10dp" 
