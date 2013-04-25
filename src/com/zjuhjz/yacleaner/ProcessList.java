@@ -12,7 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
@@ -24,21 +27,14 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-
-import com.zjuhjz.yacleaner.tool.*;
 
 
-public class ProcessList extends ListFragment {
+
+public class ProcessList extends ListFragment implements OnItemClickListener{
 	private static final String TAG = "yacleanerlog";
 	private static List<RunningAppProcessInfo> procList = null;
 	private static MemoryInfo mi = new MemoryInfo();
@@ -57,7 +53,13 @@ public class ProcessList extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
-		getProcessInfo();
+		this.getListView().setOnItemClickListener(new OnItemClickListener(){
+			public void onItemClick(AdapterView parent, View v, int position, long id) {
+		        // Do something in response to the click
+		    }
+		});
+		this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		this.getListView().setOnItemClickListener(this);
 		showProcessInfo();
 	}
 
@@ -80,11 +82,10 @@ public class ProcessList extends ListFragment {
 			@Override
 			public void onClick(View v) {
 				killAllProcesses();
-				getProcessInfo();
 				showProcessInfo();
 			}
 		});
-
+		
 		return view;
 	}
 
@@ -92,25 +93,21 @@ public class ProcessList extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case POPULATE_ID:
-			getProcessInfo();
 			showProcessInfo();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	
 	public void killAllProcesses() {
 		Context context = getActivity();
-		Log.d(TAG, "begin");
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		HashMap<String, String> processitem;
 		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList.iterator(); iterator
 				.hasNext();) {
 			processitem = iterator.next();
-			Log.d(TAG, "kill "+processitem
-					.get("package_name"));
 			activityManager.killBackgroundProcesses(processitem
 					.get("package_name"));
 		}
@@ -134,19 +131,19 @@ public class ProcessList extends ListFragment {
 
 		textview.setText("Total Process Num: "
 				+ Integer.toString(yaMemoryInfo.processInfoList.size()) + "\nfree RAM:"
-				+ availableMegs + " MB");
+				+ yaMemoryInfo.availableMemory + " MB");
 		// total ram status
 		String result = null;
 		
 	}
 
-	public int getProcessInfo() {
-		Context ctext = getActivity();
-		ActivityManager activityManager = (ActivityManager) ctext
-				.getSystemService(Context.ACTIVITY_SERVICE);
-		procList = activityManager.getRunningAppProcesses();
-		activityManager.getMemoryInfo(mi);
-		return procList.size();
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		// TODO Auto-generated method stub
+		Log.d("yacleanerdebug",position+"");
+		arg1.setBackgroundColor(0xFF00FF);
+		
 	}
+
 
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -20,11 +19,13 @@ import com.zjuhjz.yacleaner.tool.*;
 public class YAMemoryInfo {
 	public long totalMemory;
 	public long totalUsed;
-
+	public long availableMemory;
+	private ActivityManager activityManager;
 	private static List<RunningAppProcessInfo> runningAppProcesses = null;
 	private static MemoryInfo mi = new MemoryInfo();
 	// static final int POPULATE_ID = Menu.FIRST;
 	// static final int CLEAR_ID = Menu.FIRST + 1;
+
 	Context context;
 	List<HashMap<String, String>> processInfoList;
 	List<HashMap<String, String>> servicesInfoList;
@@ -34,12 +35,20 @@ public class YAMemoryInfo {
 		processInfoList = new ArrayList<HashMap<String, String>>();
 		servicesInfoList = new ArrayList<HashMap<String, String>>();
 		this.context = context;
+		activityManager = (ActivityManager) context
+				.getSystemService(Context.ACTIVITY_SERVICE);
 		refresh();
 	}
 
 	public boolean refresh() {
 		refreshProcessInfo();
+		refreshMemoryInfo();
+		return true;
+	}
 
+	public boolean refreshMemoryInfo() {
+		activityManager.getMemoryInfo(mi);
+		availableMemory = mi.availMem / 1024 / 1024;
 		return true;
 	}
 
@@ -54,9 +63,7 @@ public class YAMemoryInfo {
 		HashMap<String, String> memoryUsage = new HashMap<String, String>();
 
 		// ///////initialize///////////
-		// ActivityManager activityManager
-		ActivityManager activityManager = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
+
 		// clear
 		if (runningAppProcesses != null) {
 			runningAppProcesses.clear();
@@ -83,14 +90,11 @@ public class YAMemoryInfo {
 		for (String item : items) {
 			itempieces = item.trim().split("\\s+");
 			if (itempieces.length > 8) {
-				memoryUsage.put(itempieces[8],
-						Integer.toString(Integer.parseInt(itempieces[4]) / 1024));
+				memoryUsage.put(itempieces[8], Integer.toString(Integer
+						.parseInt(itempieces[4]) / 1024));
 			}
 
 		}
-
-		// get Memory info
-		// activityManager.getMemoryInfo(mi);
 
 		// add info to processInfoList
 		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
