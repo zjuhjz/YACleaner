@@ -26,7 +26,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
-
+import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +41,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 	YAMemoryInfo yaMemoryInfo;
 	static final int POPULATE_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
+	ProcessListAdapter simpleAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +121,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 		yaMemoryInfo.refresh();
 		
 		//TODO improve "string from"
-		SimpleAdapter simpleAdapter = new SimpleAdapter(context, yaMemoryInfo.processInfoList,
+		simpleAdapter = new ProcessListAdapter(context, yaMemoryInfo.processInfoList,
 				R.layout.process_list_item, new String[] { "app_name","memory_usage" },
 				new int[] { R.id.process_name,R.id.process_memory});
 		
@@ -141,9 +142,12 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		// TODO Auto-generated method stub
 		Log.d("yacleanerdebug",position+"");
-		arg1.setBackgroundColor(0xFF00FF);
-		
+		//arg1.setBackgroundColor(0xFF00FF);
+		arg1.setSelected(true);
+		simpleAdapter.notifyDataSetChanged();
 	}
-
+	
+	
 
 }
+
