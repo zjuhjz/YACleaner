@@ -27,26 +27,34 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import android.content.Context;
 
-
-
-public class ProcessList extends ListFragment implements OnItemClickListener{
+public class ProcessList extends ListFragment implements OnItemClickListener {
 	private static final String TAG = "yacleanerlog";
-	private static List<RunningAppProcessInfo> procList = null;
-	private static MemoryInfo mi = new MemoryInfo();
+
+	//private static List<RunningAppProcessInfo> procList = null;
 	YAMemoryInfo yaMemoryInfo;
 	static final int POPULATE_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
 	ProcessListAdapter simpleAdapter;
 
+	//white list
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setContentView(R.layout.activity_process_list);
+		
+		// load white list
+		
 	}
 
 	@Override
@@ -54,10 +62,11 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
-		this.getListView().setOnItemClickListener(new OnItemClickListener(){
-			public void onItemClick(AdapterView parent, View v, int position, long id) {
-		        // Do something in response to the click
-		    }
+		this.getListView().setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position,
+					long id) {
+				// Do something in response to the click
+			}
 		});
 		this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		this.getListView().setOnItemClickListener(this);
@@ -86,7 +95,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 				showProcessInfo();
 			}
 		});
-		
+
 		return view;
 	}
 
@@ -100,14 +109,19 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	@Override
+	public void onPause(){
+		yaMemoryInfo.saveWhiteList();
+		super.onPause();
+	}
 	
 	public void killAllProcesses() {
 		Context context = getActivity();
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		HashMap<String, String> processitem;
-		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList
+				.iterator(); iterator.hasNext();) {
 			processitem = iterator.next();
 			activityManager.killBackgroundProcesses(processitem
 					.get("package_name"));
@@ -115,39 +129,31 @@ public class ProcessList extends ListFragment implements OnItemClickListener{
 	}
 
 	public void showProcessInfo() {
-		
-		//initial and refresh memoryinfo
+		// initial and refresh memoryinfo
 		Context context = getActivity();
 		yaMemoryInfo.refresh();
-		
-		//TODO improve "string from"
-		simpleAdapter = new ProcessListAdapter(context, yaMemoryInfo.processInfoList,
-				R.layout.process_list_item, new String[] { "app_name","memory_usage" },
-				new int[] { R.id.process_name,R.id.process_memory});
-		
+
+		// TODO improve "string from"
+		simpleAdapter = new ProcessListAdapter(context,
+				yaMemoryInfo.processInfoList, R.layout.process_list_item,
+				new String[] { "app_name", "memory_usage" }, new int[] {
+						R.id.process_name, R.id.process_memory });
+
 		setListAdapter(simpleAdapter);
-		long availableMegs = mi.availMem / 1048576L;
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
 
 		textview.setText("Total Process Num: "
-				+ Integer.toString(yaMemoryInfo.processInfoList.size()) + "\nfree RAM:"
-				+ yaMemoryInfo.availableMemory + " MB");
-		// total ram status
-		String result = null;
-		
+				+ Integer.toString(yaMemoryInfo.processInfoList.size())
+				+ "\nfree RAM:" + yaMemoryInfo.availableMemory + " MB");
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		// TODO Auto-generated method stub
-		Log.d("yacleanerdebug",position+"");
-		//arg1.setBackgroundColor(0xFF00FF);
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+			long arg3) {
+		Log.d("yacleanerdebug", position + "");
 		arg1.setSelected(true);
 		simpleAdapter.notifyDataSetChanged();
 	}
-	
-	
 
 }
-

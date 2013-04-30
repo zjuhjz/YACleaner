@@ -1,7 +1,11 @@
 package com.zjuhjz.yacleaner;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +26,10 @@ public class YAMemoryInfo {
 	public long availableMemory;
 	private ActivityManager activityManager;
 	private static List<RunningAppProcessInfo> runningAppProcesses = null;
+	private static final String WHITE_LIST_FILE_NAME = "whitelist";
+	private static final String TAG = "yacleanerlog";
 	private static MemoryInfo mi = new MemoryInfo();
+	public List<String> whiteList = new ArrayList<String>();
 	// static final int POPULATE_ID = Menu.FIRST;
 	// static final int CLEAR_ID = Menu.FIRST + 1;
 
@@ -37,6 +44,7 @@ public class YAMemoryInfo {
 		this.context = context;
 		activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
+		loadWhiteList();
 		refresh();
 	}
 
@@ -49,6 +57,39 @@ public class YAMemoryInfo {
 	public boolean refreshMemoryInfo() {
 		activityManager.getMemoryInfo(mi);
 		availableMemory = mi.availMem / 1024 / 1024;
+		return true;
+	}
+
+	public boolean loadWhiteList() {
+		try {
+			FileInputStream fileInputStream = context
+					.openFileInput(WHITE_LIST_FILE_NAME);
+			byte[] buffer = new byte[1024];
+			StringBuffer fileContent = new StringBuffer("");
+			Log.d(TAG, "file opened");
+			while (fileInputStream.read(buffer) != -1) {
+				fileContent.append(new String(buffer));
+			}
+			String data = new String(fileContent);
+			whiteList.addAll(Arrays.asList(data.split("\n")));
+			fileInputStream.close();
+		} catch (FileNotFoundException e) {
+			try {
+				FileOutputStream fileOutputStream = context.openFileOutput(
+						WHITE_LIST_FILE_NAME, 0);
+				fileOutputStream.close();
+				Log.d(TAG, "file created");
+
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				// e1.printStackTrace();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+			}
+		} catch (IOException e) {
+			// e.printStackTrace();
+		}
 		return true;
 	}
 
@@ -97,9 +138,10 @@ public class YAMemoryInfo {
 		}
 
 		// add info to processInfoList
+		RunningAppProcessInfo procInfo;
 		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
 				.iterator(); iterator.hasNext();) {
-			RunningAppProcessInfo procInfo = iterator.next();
+			procInfo = iterator.next();
 			HashMap<String, String> map = new HashMap<String, String>();
 			try {
 				ai = pm.getApplicationInfo(procInfo.processName, 0);
@@ -113,9 +155,47 @@ public class YAMemoryInfo {
 			map.put("pid", procInfo.pid + "");
 			map.put("memory_usage", memoryUsage.get(procInfo.processName)
 					+ "MB");
+			map.put("whitelist", whiteList.contains(procInfo.processName) ? "1"
+					: "0");
 			processInfoList.add(map);
 		}
 		return runningAppProcesses.size();
+	}
+
+	public boolean addToWhiteList(String PackageName) {
+		if (!whiteList.contains(PackageName)) {
+			whiteList.add(PackageName);
+		}
+		return true;
+	}
+
+	public boolean deleteFromWhiteList(String PackageName) {
+		if (whiteList.contains(PackageName)) {
+			whiteList.remove(PackageName);
+		}
+		return true;
+	}
+
+	public boolean saveWhiteList() {
+		StringBuffer fileContent = new StringBuffer("");
+		HashMap<String, String> procInfo;
+		for (Iterator<HashMap<String, String>> iterator = processInfoList
+				.iterator(); iterator.hasNext();) {
+			procInfo = iterator.next();
+			if (procInfo.get("whitelist") == "1") {
+				fileContent.append(procInfo.get("package_name") + "\n");
+			}
+		}
+		try {
+			FileOutputStream fileOutputStream = context.openFileOutput(
+					WHITE_LIST_FILE_NAME, Context.MODE_PRIVATE);
+			fileOutputStream.write(fileContent.toString().getBytes());
+		} catch (FileNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 
 }
