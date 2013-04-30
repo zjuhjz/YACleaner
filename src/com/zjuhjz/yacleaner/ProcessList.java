@@ -111,7 +111,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	}
 	@Override
 	public void onPause(){
-		yaMemoryInfo.saveWhiteList();
 		super.onPause();
 	}
 	
@@ -153,6 +152,9 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			long arg3) {
 		Log.d("yacleanerdebug", position + "");
 		arg1.setSelected(true);
+		HashMap<String,String> processInfo = yaMemoryInfo.processInfoList.get(position);
+		processInfo.put("whitelist", processInfo.get("whitelist")=="1"?"0":"1");
+		yaMemoryInfo.addToWhiteList(processInfo.get("package_name"));
 		simpleAdapter.notifyDataSetChanged();
 	}
 

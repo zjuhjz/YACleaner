@@ -165,6 +165,7 @@ public class YAMemoryInfo {
 	public boolean addToWhiteList(String PackageName) {
 		if (!whiteList.contains(PackageName)) {
 			whiteList.add(PackageName);
+			saveWhiteList();
 		}
 		return true;
 	}
@@ -172,11 +173,12 @@ public class YAMemoryInfo {
 	public boolean deleteFromWhiteList(String PackageName) {
 		if (whiteList.contains(PackageName)) {
 			whiteList.remove(PackageName);
+			saveWhiteList();
 		}
 		return true;
 	}
 
-	public boolean saveWhiteList() {
+	private boolean saveWhiteList() {
 		StringBuffer fileContent = new StringBuffer("");
 		HashMap<String, String> procInfo;
 		for (Iterator<HashMap<String, String>> iterator = processInfoList
