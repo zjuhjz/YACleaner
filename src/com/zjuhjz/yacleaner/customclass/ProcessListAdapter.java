@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
@@ -13,6 +14,7 @@ import android.widget.SimpleAdapter;
 
 
 public class ProcessListAdapter extends SimpleAdapter {
+	private static final String TAG = "yacleanerlog";
 	private String[] colours = new String[] {"#CCCCCC", "#FFFFFF"};
 	private List<? extends Map<String, ?>> data;
 	HashMap<String,String> processInfo;
@@ -28,11 +30,8 @@ public class ProcessListAdapter extends SimpleAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
 		View view = super.getView(position, convertView, parent);
-		view.setBackgroundColor(Color.parseColor(colours[position % colours.length]));
-		if(view.isSelected()==true)
-		{
-			view.setBackgroundColor(Color.parseColor("#00FFFF"));
-		}
+		//view.setBackgroundColor(Color.parseColor(colours[position % colours.length]));
+		view.setBackgroundColor(Color.parseColor("#00FFFF"));
 		processInfo = (HashMap<String,String> )data.get(position);
 		if (processInfo.get("whitelist")=="1"){
 			view.setBackgroundColor(Color.parseColor("#FFFFFF"));

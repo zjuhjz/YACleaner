@@ -153,8 +153,14 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		Log.d("yacleanerdebug", position + "");
 		arg1.setSelected(true);
 		HashMap<String,String> processInfo = yaMemoryInfo.processInfoList.get(position);
-		processInfo.put("whitelist", processInfo.get("whitelist")=="1"?"0":"1");
-		yaMemoryInfo.addToWhiteList(processInfo.get("package_name"));
+		if(processInfo.get("whitelist")=="0"){
+			processInfo.put("whitelist", "1");
+			yaMemoryInfo.addToWhiteList(processInfo.get("package_name"));
+		}
+		else{
+			processInfo.put("whitelist", "0");
+			yaMemoryInfo.removeFromWhiteList(processInfo.get("package_name"));
+		}
 		simpleAdapter.notifyDataSetChanged();
 	}
 

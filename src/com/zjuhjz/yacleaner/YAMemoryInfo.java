@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -159,6 +160,7 @@ public class YAMemoryInfo {
 					: "0");
 			processInfoList.add(map);
 		}
+		Collections.sort(processInfoList, new ComparatorProcessList());
 		return runningAppProcesses.size();
 	}
 
@@ -167,12 +169,14 @@ public class YAMemoryInfo {
 			whiteList.add(PackageName);
 			saveWhiteList();
 		}
+
 		return true;
 	}
 
-	public boolean deleteFromWhiteList(String PackageName) {
+	public boolean removeFromWhiteList(String PackageName) {
 		if (whiteList.contains(PackageName)) {
 			whiteList.remove(PackageName);
+			Log.d(TAG, "remove "+ PackageName);
 			saveWhiteList();
 		}
 		return true;
@@ -192,6 +196,7 @@ public class YAMemoryInfo {
 			FileOutputStream fileOutputStream = context.openFileOutput(
 					WHITE_LIST_FILE_NAME, Context.MODE_PRIVATE);
 			fileOutputStream.write(fileContent.toString().getBytes());
+
 		} catch (FileNotFoundException e) {
 			return false;
 		} catch (IOException e) {
