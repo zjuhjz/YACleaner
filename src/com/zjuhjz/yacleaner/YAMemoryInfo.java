@@ -158,6 +158,8 @@ public class YAMemoryInfo {
 					+ "MB");
 			map.put("whitelist", whiteList.contains(procInfo.processName) ? "1"
 					: "0");
+			//TODO add a filter
+			map.put("is_system_app", (ai.flags&ai.FLAG_SYSTEM)+"");
 			processInfoList.add(map);
 		}
 		Collections.sort(processInfoList, new ComparatorProcessList());
