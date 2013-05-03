@@ -62,12 +62,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
-		this.getListView().setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int position,
-					long id) {
-				// Do something in response to the click
-			}
-		});
 		this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		this.getListView().setOnItemClickListener(this);
 		showProcessInfo();
