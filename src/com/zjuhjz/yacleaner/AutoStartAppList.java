@@ -36,18 +36,7 @@ public class AutoStartAppList extends ListFragment implements OnItemClickListene
 		appInfoList = new ArrayList<HashMap<String,String>>();
 		
 		//List<String> startupApps = new ArrayList<String>();
-        final Intent intent = new Intent("android.intent.action.BOOT_COMPLETED");
-        final List<ResolveInfo> activities = packageManager.queryBroadcastReceivers(intent, 0);
-        for (ResolveInfo resolveInfo : activities) {
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
-            if (activityInfo != null){
-            	appInfo = new HashMap<String,String>();
-            	appInfo.put("package_name", activityInfo.packageName);
-            	appInfoList.add(appInfo);
-            	Log.d(TAG,"autostart "+activityInfo.name);
-                //startupApps.add(activityInfo.name);
-            }
-        }
+        
         showAppInfo();
 	}
 
