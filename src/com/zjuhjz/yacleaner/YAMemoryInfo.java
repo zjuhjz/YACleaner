@@ -162,7 +162,7 @@ public class YAMemoryInfo {
 			if(ai!=null){
 				map.put("is_system_app", (ai.flags&ai.FLAG_SYSTEM)+"");
 			}else{
-				Log.d(TAG,"this app's ApplicationInfo is missing:"+applicationName);
+				//Log.d(TAG,"this app's ApplicationInfo is missing:"+applicationName);
 			}
 			
 			processInfoList.add(map);
