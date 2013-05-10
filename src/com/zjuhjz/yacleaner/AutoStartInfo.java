@@ -45,7 +45,7 @@ public class AutoStartInfo {
 		List<ResolveInfo> activities;
 		for(int i = 0; i < Constants.broadcastActions.length; ++i){
 			intentName = Constants.broadcastActions[i][0];
-			Log.d(TAG, intentName);
+			//Log.d(TAG, intentName);
 			intent= new Intent(intentName);
 			activities = packageManager.queryBroadcastReceivers(intent, 0);
 			

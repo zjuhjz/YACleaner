@@ -71,9 +71,18 @@ public class AutoStartAppList extends ListFragment implements OnItemClickListene
 	}
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		//Log.d(TAG, "click position:"+position);
 		FragmentManager fragmentManager =  getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		IntentsAppList intentsAppList = new IntentsAppList(autoStartInfo.intentsInfoList,this.getActivity()); 
+		HashMap<String,Object> intentsAppInfo = autoStartInfo.intentsAppInfoList.get(position);
+		if(intentsAppInfo!=null){
+			Log.d(TAG, "It's NULL!!");
+			Log.d(TAG, intentsAppInfo.size()+"");
+		}
+		
+		@SuppressWarnings({ "unchecked", "unused" })
+		List<HashMap<String,Object>> intentsAppInfoList=(List<HashMap<String, Object>>) intentsAppInfo.get("appInfoList");
+		IntentsAppList intentsAppList = new IntentsAppList(intentsAppInfoList,this.getActivity()); 
 		fragmentTransaction.add(android.R.id.content, intentsAppList);
 		fragmentTransaction.addToBackStack(null);;
 		fragmentTransaction.commit();
