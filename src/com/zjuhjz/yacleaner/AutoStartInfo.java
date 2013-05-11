@@ -7,7 +7,9 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 
@@ -47,7 +49,7 @@ public class AutoStartInfo {
 			intentName = Constants.broadcastActions[i][0];
 			//Log.d(TAG, intentName);
 			intent= new Intent(intentName);
-			activities = packageManager.queryBroadcastReceivers(intent, 0);
+			activities = packageManager.queryBroadcastReceivers(intent, PackageManager.GET_RESOLVED_FILTER);
 			
 			for (ResolveInfo resolveInfo : activities) {
 	            ActivityInfo activityInfo = resolveInfo.activityInfo;
@@ -68,10 +70,20 @@ public class AutoStartInfo {
 	        }
 			
 			
-			
 			intentItem = null;
 		}
-		
+		Log.d(TAG, "begin to retrieve");
+		try {
+			PackageInfo packageInfo=packageManager.getPackageInfo("com.afaria.client.samsung2client",PackageManager.GET_RECEIVERS);
+			ActivityInfo[] receivers = packageInfo.receivers;
+			for(ActivityInfo receiver: receivers){
+				Log.d(TAG, "receiver activity"+receiver.name);
+			}
+		} catch (NameNotFoundException e) {
+	
+			
+			e.printStackTrace();
+		}
         
         
 	}
