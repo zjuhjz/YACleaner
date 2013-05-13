@@ -26,23 +26,25 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.support.v4.app.FragmentActivity;
 
-public class AutoStartAppList extends ListFragment implements OnItemClickListener {
+public class AutoStartAppList extends ListFragment implements
+		OnItemClickListener {
 	AutoStartAppListAdapter autoStartAppListAdapter;
-	List<HashMap<String,String>> appInfoList;
+	List<HashMap<String, String>> appInfoList;
 	private static final String TAG = "yacleanerlog";
-	AutoStartInfo  autoStartInfo ;
+	AutoStartInfo autoStartInfo;
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		//this.getListView().setOnItemClickListener(this);
+		// this.getListView().setOnItemClickListener(this);
 		PackageManager packageManager = getActivity().getPackageManager();
-		HashMap<String,String> appInfo = null;
-		appInfoList = new ArrayList<HashMap<String,String>>();
+		HashMap<String, String> appInfo = null;
+		appInfoList = new ArrayList<HashMap<String, String>>();
 		autoStartInfo = new AutoStartInfo(getActivity());
 		this.getListView().setOnItemClickListener(this);
-		
-        showAppInfo();
+
+		showAppInfo();
 	}
 
 	@Override
@@ -58,46 +60,51 @@ public class AutoStartAppList extends ListFragment implements OnItemClickListene
 				showAppInfo();
 			}
 		});
-		
+
 		return view;
 	}
-	
-	private void showAppInfo(){
+
+	private void showAppInfo() {
 		Context context = getActivity();
-		
+
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
-				autoStartInfo.intentsInfoList, R.layout.autostart_app_list_item,
-				new String[] { "IntentName" }, new int[] {
-						R.id.autostart_app_name});
+				autoStartInfo.intentsInfoList,
+				R.layout.autostart_app_list_item,
+				new String[] { "IntentName" },
+				new int[] { R.id.autostart_app_name });
 		setListAdapter(autoStartAppListAdapter);
 	}
+
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		//Log.d(TAG, "click position:"+position);
-		try{
-			FragmentManager fragmentManager =  getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			HashMap<String,Object> intentsAppInfo = autoStartInfo.intentsInfoList.get(position);
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+			long arg3) {
+		// Log.d(TAG, "click position:"+position);
+		try {
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager
+					.beginTransaction();
+			HashMap<String, Object> intentsAppInfo = autoStartInfo.intentsInfoList
+					.get(position);
 			@SuppressWarnings({ "unchecked", "unused" })
-			List<HashMap<String,Object>> intentsAppInfoList=(List<HashMap<String, Object>>) intentsAppInfo.get("appInfoList");
-			IntentsAppList intentsAppList = new IntentsAppList(intentsAppInfoList,this.getActivity()); 
+			List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) intentsAppInfo
+					.get("appInfoList");
+			IntentsAppList intentsAppList = new IntentsAppList(
+					intentsAppInfoList, this.getActivity());
 			fragmentTransaction.add(android.R.id.content, intentsAppList);
-			fragmentTransaction.addToBackStack(null);;
+			fragmentTransaction.addToBackStack(null);
+			;
 			fragmentTransaction.commit();
-		}
-		catch(Exception e){
-//			if(intentsAppInfo!=null){
-//				Log.d(TAG, "It's NULL!!");
-//				Log.d(TAG, intentsAppInfo.size()+"");
-//			}
+		} catch (Exception e) {
+			// if(intentsAppInfo!=null){
+			// Log.d(TAG, "It's NULL!!");
+			// Log.d(TAG, intentsAppInfo.size()+"");
+			// }
 			e.printStackTrace();
-			Log.d(TAG, "printed"+e.toString());
-			
-		}
-		finally{
+			Log.d(TAG, "printed" + e.toString());
+
+		} finally {
 			Log.d(TAG, "finally");
 		}
-		
-		
+
 	}
 }
