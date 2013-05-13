@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zjuhjz.yacleaner.customclass.AutoStartAppListAdapter;
 import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
+import com.zjuhjz.yacleaner.db.IntentFilterInfo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,12 @@ public class AutoStartAppList extends ListFragment implements OnItemClickListene
 		appInfoList = new ArrayList<HashMap<String,String>>();
 		autoStartInfo = new AutoStartInfo(getActivity());
 		this.getListView().setOnItemClickListener(this);
+		ReceiverReader receiverReader = new ReceiverReader(getActivity(),null);
+		ArrayList<IntentFilterInfo> info = receiverReader.load();
+		Log.d(TAG,"total size i got is:"+info.size());
+		for(IntentFilterInfo intentFilterInfo : info){
+			Log.d(TAG,"the component name is "+intentFilterInfo.componentInfo.componentName);
+		}
         showAppInfo();
 	}
 
