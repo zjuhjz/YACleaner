@@ -62,7 +62,7 @@ public class IntentsAppList extends ListFragment implements OnItemClickListener 
 	private void showAppInfo(){
 		ProcessListAdapter simpleAdapter = new ProcessListAdapter(context,
 				intentsAppInfoList, R.layout.intents_app_list_item,
-				new String[] { "package_name" }, new int[] {
+				new String[] { "display" }, new int[] {
 						R.id.com_zjuhjz_yacleaner_IntentsAppList_appname, });
 
 		setListAdapter(simpleAdapter);
