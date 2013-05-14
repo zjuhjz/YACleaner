@@ -102,7 +102,7 @@ public class ReceiverReader {
 		mResult = new ArrayList<IntentFilterInfo>();
 
 		List<android.content.pm.PackageInfo> packages =
-			mPackageManager.getInstalledPackages(PackageManager.GET_DISABLED_COMPONENTS);
+			mPackageManager.getInstalledPackages(0);
 		int packageCount = packages.size();
 		for (int i=0; i<packageCount; i++)
 		{

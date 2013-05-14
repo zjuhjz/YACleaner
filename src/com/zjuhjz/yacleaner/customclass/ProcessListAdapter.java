@@ -31,10 +31,12 @@ public class ProcessListAdapter extends SimpleAdapter {
 	{
 		View view = super.getView(position, convertView, parent);
 		//view.setBackgroundColor(Color.parseColor(colours[position % colours.length]));
-		view.setBackgroundColor(Color.parseColor("#00FFFF"));
+		//
+		view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+		//view.setBackgroundColor();
 		processInfo = (HashMap<String,String> )data.get(position);
 		if (processInfo.get("whitelist")=="1"){
-			view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+			view.setBackgroundColor(Color.parseColor("#00FFFF"));
 		}
 		return view;
 	}

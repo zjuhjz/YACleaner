@@ -3,10 +3,12 @@ package com.zjuhjz.yacleaner;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zjuhjz.yacleaner.customclass.IntentAppListAdapter;
 import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -45,10 +47,8 @@ public class IntentsAppList extends ListFragment implements OnItemClickListener 
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
 			}
 		});
-
 		return view;
 	}
 	
@@ -60,12 +60,12 @@ public class IntentsAppList extends ListFragment implements OnItemClickListener 
 	}
 	
 	private void showAppInfo(){
-		ProcessListAdapter simpleAdapter = new ProcessListAdapter(context,
+		IntentAppListAdapter intentAppListAdapter = new IntentAppListAdapter(context,
 				intentsAppInfoList, R.layout.intents_app_list_item,
 				new String[] { "display" }, new int[] {
 						R.id.com_zjuhjz_yacleaner_IntentsAppList_appname, });
 
-		setListAdapter(simpleAdapter);
+		setListAdapter(intentAppListAdapter);
 	}
-
+	
 }

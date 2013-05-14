@@ -43,7 +43,6 @@ public class AutoStartAppList extends ListFragment implements
 		appInfoList = new ArrayList<HashMap<String, String>>();
 		autoStartInfo = new AutoStartInfo(getActivity());
 		this.getListView().setOnItemClickListener(this);
-
 		showAppInfo();
 	}
 
@@ -66,7 +65,6 @@ public class AutoStartAppList extends ListFragment implements
 
 	private void showAppInfo() {
 		Context context = getActivity();
-
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
 				autoStartInfo.intentsInfoList,
 				R.layout.autostart_app_list_item,
@@ -92,7 +90,6 @@ public class AutoStartAppList extends ListFragment implements
 					intentsAppInfoList, this.getActivity());
 			fragmentTransaction.add(android.R.id.content, intentsAppList);
 			fragmentTransaction.addToBackStack(null);
-			;
 			fragmentTransaction.commit();
 		} catch (Exception e) {
 			// if(intentsAppInfo!=null){
@@ -100,10 +97,10 @@ public class AutoStartAppList extends ListFragment implements
 			// Log.d(TAG, intentsAppInfo.size()+"");
 			// }
 			e.printStackTrace();
-			Log.d(TAG, "printed" + e.toString());
+			//og.d(TAG, "printed" + e.toString());
 
 		} finally {
-			Log.d(TAG, "finally");
+			//Log.d(TAG, "finally");
 		}
 
 	}

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class ComparatorProcessList implements  Comparator {
+public class ComparatorProcessList implements  Comparator<Object> {
 
 	@Override
 	public int compare(Object arg0, Object arg1) {
