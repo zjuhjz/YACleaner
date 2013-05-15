@@ -25,31 +25,38 @@ import com.zjuhjz.yacleaner.tool.Constants;
 public class AutoStartInfo {
 	// all broadcast Actions
 
-	List<HashMap<String, Object>> appInfoList = null;
-
 	// Intents to App
 	List<HashMap<String, Object>> intentsInfoList = null;
 	List<HashMap<String, Object>> intentsAppInfoList = null;
 	HashMap<String, Object> intentItem = null;
 	HashMap<String, Object> intentsAppInfo = null;
 
-	       private static final String TAG = "yacleanerlog";
+	// App to Intents
+	List<HashMap<String, Object>> appInfoList = null;
+	List<HashMap<String, Object>> appIntentsInfoList = null;
+	HashMap<String, Object> appItem = null;
+	HashMap<String, Object> appIntentsInfo = null;
+
+	private static final String TAG = "yacleanerlog";
 	PackageManager packageManager = null;
 	Context context = null;
 
 	AutoStartInfo(Context context) {
 		this.context = context;
 		intentsInfoList = new ArrayList<HashMap<String, Object>>();
+		appInfoList = new ArrayList<HashMap<String, Object>>();
+
 		packageManager = context.getPackageManager();
 		refresh();
 	}
 
 	public void refresh() {
-		loadIntentsInfo();
+		load();
 	}
 
 	private void intentAppListSort(List<HashMap<String, Object>> list) {
-		if (list==null) return;
+		if (list == null)
+			return;
 		Collections.sort(list, new Comparator<HashMap<String, Object>>() {
 			public int compare(HashMap<String, Object> arg0,
 					HashMap<String, Object> arg1) {
@@ -60,37 +67,81 @@ public class AutoStartInfo {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void loadIntentsInfo() {
+	private void load() {
 		String intentName;
 		Intent intent;
-		List<ResolveInfo> activities;
 		ReceiverReader receiverReader = new ReceiverReader(context, null);
 		ArrayList<IntentFilterInfo> info = receiverReader.load();
 		// sort
-		Collections.sort(info, new ComparatorIntentFilterList());
-		
-		for (IntentFilterInfo intentFilterInfo : info) {
-//			Log.d(TAG, "component"
-//					+ intentFilterInfo.componentInfo.componentName + " package"
-//					+ intentFilterInfo.componentInfo.packageInfo.packageName);
-		}
-		String lastIntentName = null;
+
+		String lastIntentName = "";
 		List<String> broadcastActions = new ArrayList<String>();
 		for (int i = 0; i < Constants.broadcastActions.length; ++i) {
 			broadcastActions.add(Constants.broadcastActions[i][0]);
 		}
+
+		Collections.sort(info, new Comparator<IntentFilterInfo>() {
+			@Override
+			public int compare(IntentFilterInfo lhs, IntentFilterInfo rhs) {
+				if (lhs != null && rhs != null) {
+					return lhs.componentInfo.packageInfo.packageName
+							.compareTo(rhs.componentInfo.packageInfo.packageName);
+				}
+				return 0;
+			}
+		});
+
+		String appName;
+		String lastAppName = "";
 		for (IntentFilterInfo intentFilterInfo : info) {
-			intentName = intentFilterInfo.action;// Constants.broadcastActions[i][0];
+			appName = intentFilterInfo.componentInfo.packageInfo.packageLabel == null ? intentFilterInfo.componentInfo.packageInfo.packageName
+					: intentFilterInfo.componentInfo.packageInfo.packageLabel;
+			intentName = intentFilterInfo.action;
+			Log.d(TAG,"first action : "+appName);
 			if (!broadcastActions.contains(intentName)) {
 				continue;
 			}
-			// Log.d(TAG, intentName);
-			// intent= new Intent(intentName);
-			// activities = packageManager.queryBroadcastReceivers(intent,
-			// PackageManager.GET_RESOLVED_FILTER);
+			if (!appName.equals(lastAppName)) {
+				appItem = new HashMap<String, Object>();
+				appInfoList.add(appItem);
+				appItem.put("appName", appName);
+				appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
+				appItem.put("intentInfoList", appIntentsInfoList);
+				
+			}
+			appIntentsInfo = new HashMap<String, Object>();
+			appIntentsInfo.put("component_name",
+					intentFilterInfo.componentInfo.componentName);
+			appIntentsInfo.put("package_name",
+					intentFilterInfo.componentInfo.packageInfo.packageName);
+
+			appIntentsInfo.put("is_system",
+					intentFilterInfo.componentInfo.packageInfo.isSystem);
+			appIntentsInfo.put("enable_state",
+					intentFilterInfo.componentInfo.currentEnabledState == 2 ? 0
+							: 1);
+			appIntentsInfo.put("default_enabled",
+					intentFilterInfo.componentInfo.defaultEnabled);
+			appIntentsInfo.put("icon",
+					intentFilterInfo.componentInfo.packageInfo.icon);
+			appIntentsInfo.put("intentName",intentName);
+			appIntentsInfo.put("display",intentName+"\n"+intentFilterInfo.componentInfo.componentName);
+			appIntentsInfoList.add(appIntentsInfo);
+
+			lastAppName = appName;
+
+		}
+		Log.d(TAG, "the total size :"+appInfoList.size());
+		
+
+		for (IntentFilterInfo intentFilterInfo : info) {
+			intentName = intentFilterInfo.action;
+			if (!broadcastActions.contains(intentName)) {
+				continue;
+			}
+
 			if (!intentName.equals(lastIntentName)) {
 				// sort
-
 				intentAppListSort(intentsAppInfoList);
 
 				intentItem = new HashMap<String, Object>();
@@ -99,7 +150,6 @@ public class AutoStartInfo {
 				intentItem.put("appInfoList", intentsAppInfoList);
 				intentsInfoList.add(intentItem);
 			}
-			HashMap<String, Object> item = new HashMap<String, Object>();
 			intentsAppInfo = new HashMap<String, Object>();
 			intentsAppInfo.put("component_name",
 					intentFilterInfo.componentInfo.componentName);

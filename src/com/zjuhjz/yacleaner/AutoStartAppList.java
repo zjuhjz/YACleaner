@@ -29,7 +29,6 @@ import android.support.v4.app.FragmentActivity;
 public class AutoStartAppList extends ListFragment implements
 		OnItemClickListener {
 	AutoStartAppListAdapter autoStartAppListAdapter;
-	List<HashMap<String, String>> appInfoList;
 	private static final String TAG = "yacleanerlog";
 	AutoStartInfo autoStartInfo;
 
@@ -40,7 +39,6 @@ public class AutoStartAppList extends ListFragment implements
 		// this.getListView().setOnItemClickListener(this);
 		PackageManager packageManager = getActivity().getPackageManager();
 		HashMap<String, String> appInfo = null;
-		appInfoList = new ArrayList<HashMap<String, String>>();
 		autoStartInfo = new AutoStartInfo(getActivity());
 		this.getListView().setOnItemClickListener(this);
 		showAppInfo();
@@ -59,16 +57,15 @@ public class AutoStartAppList extends ListFragment implements
 				showAppInfo();
 			}
 		});
-
 		return view;
 	}
 
 	private void showAppInfo() {
 		Context context = getActivity();
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
-				autoStartInfo.intentsInfoList,
+				autoStartInfo.appInfoList,
 				R.layout.autostart_app_list_item,
-				new String[] { "IntentName" },
+				new String[] { "appName" },
 				new int[] { R.id.autostart_app_name });
 		setListAdapter(autoStartAppListAdapter);
 	}
@@ -81,26 +78,23 @@ public class AutoStartAppList extends ListFragment implements
 			FragmentManager fragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager
 					.beginTransaction();
-			HashMap<String, Object> intentsAppInfo = autoStartInfo.intentsInfoList
+//			HashMap<String, Object> intentsAppInfo = autoStartInfo.intentsInfoList
+//					.get(position);
+			HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
 					.get(position);
+			
 			@SuppressWarnings({ "unchecked", "unused" })
-			List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) intentsAppInfo
-					.get("appInfoList");
+			List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
+					.get("intentInfoList");
 			IntentsAppList intentsAppList = new IntentsAppList(
 					intentsAppInfoList, this.getActivity());
 			fragmentTransaction.add(android.R.id.content, intentsAppList);
 			fragmentTransaction.addToBackStack(null);
 			fragmentTransaction.commit();
 		} catch (Exception e) {
-			// if(intentsAppInfo!=null){
-			// Log.d(TAG, "It's NULL!!");
-			// Log.d(TAG, intentsAppInfo.size()+"");
-			// }
-			e.printStackTrace();
-			//og.d(TAG, "printed" + e.toString());
 
 		} finally {
-			//Log.d(TAG, "finally");
+
 		}
 
 	}

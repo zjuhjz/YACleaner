@@ -4,13 +4,11 @@ import java.util.Comparator;
 
 import com.zjuhjz.yacleaner.db.IntentFilterInfo;
 
-public class ComparatorIntentFilterList implements  Comparator{
+public class ComparatorIntentFilterList implements  Comparator<IntentFilterInfo>{
 
-	@Override
-	public int compare(Object lhs, Object rhs) {
-		IntentFilterInfo left = (IntentFilterInfo)lhs;
-		IntentFilterInfo right = (IntentFilterInfo)rhs;
-		return left.action.compareTo(right.action);
+	public int compare(IntentFilterInfo lhs, IntentFilterInfo rhs) {
+		// TODO Auto-generated method stub
+		return lhs.action.compareTo(rhs.action);
 	}
 	
 }
