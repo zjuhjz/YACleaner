@@ -7,5 +7,9 @@
     <string name="title_activity_process_list">ProcessList</string>
     <string name="cleanbtn">clean</string>
     <string name="nodata">No data</string>
+    <string name="menu_set_autostart_1">gentle</string>
+    <string name="menu_set_autostart_2">strong</string>
+    <string name="menu_set_autostart_3">complete</string>
+    <string name="menu_set_autostart_4">do it self</string>
 
 </resources>

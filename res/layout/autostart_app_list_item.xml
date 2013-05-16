@@ -12,8 +12,7 @@
    	    android:id="@+id/autostart_app_icon"
    	    android:contentDescription="icon"
    	    android:layout_width="50dp" 
-	   	android:layout_height="50dp"
-   	    >
+	   	android:layout_height="50dp">
    	</ImageView>
 	
 	<TextView android:id="@+id/autostart_app_name" 

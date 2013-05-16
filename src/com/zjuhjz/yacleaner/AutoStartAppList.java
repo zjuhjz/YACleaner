@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 import com.zjuhjz.yacleaner.customclass.AutoStartAppListAdapter;
 import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
 import com.zjuhjz.yacleaner.db.IntentFilterInfo;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +38,6 @@ public class AutoStartAppList extends ListFragment implements
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		// this.getListView().setOnItemClickListener(this);
 		PackageManager packageManager = getActivity().getPackageManager();
 		HashMap<String, String> appInfo = null;
 		autoStartInfo = new AutoStartInfo(getActivity());
@@ -50,13 +51,6 @@ public class AutoStartAppList extends ListFragment implements
 		// super.onCreateView(inflater, container, savedInstanceState);
 		View view = inflater.inflate(R.layout.activity_autostart_app_list, container,
 				false);
-		//final View button = view.findViewById(R.id.clean);
-//		button.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				showAppInfo();
-//			}
-//		});
 		return view;
 	}
 
@@ -74,28 +68,45 @@ public class AutoStartAppList extends ListFragment implements
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
 		// Log.d(TAG, "click position:"+position);
-		try {
-			FragmentManager fragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager
-					.beginTransaction();
-//			HashMap<String, Object> intentsAppInfo = autoStartInfo.intentsInfoList
+
+
+		
+		
+		
+		FragmentManager fragmentManager = getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager
+				.beginTransaction();
+		HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
+				.get(position);
+		@SuppressWarnings("unchecked")
+		List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
+				.get("intentInfoList");
+		MenuSetAutostartApp intentsAppList = new MenuSetAutostartApp(
+				intentsAppInfoList, this.getActivity());
+		fragmentTransaction.add(android.R.id.content, intentsAppList);
+		fragmentTransaction.addToBackStack(null);
+		fragmentTransaction.commit();
+		
+//		try {
+//			FragmentManager fragmentManager = getFragmentManager();
+//			FragmentTransaction fragmentTransaction = fragmentManager
+//					.beginTransaction();
+//			HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
 //					.get(position);
-			HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
-					.get(position);
-			
-			@SuppressWarnings({ "unchecked", "unused" })
-			List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
-					.get("intentInfoList");
-			IntentsAppList intentsAppList = new IntentsAppList(
-					intentsAppInfoList, this.getActivity());
-			fragmentTransaction.add(android.R.id.content, intentsAppList);
-			fragmentTransaction.addToBackStack(null);
-			fragmentTransaction.commit();
-		} catch (Exception e) {
-
-		} finally {
-
-		}
+//			
+//			@SuppressWarnings({ "unchecked", "unused" })
+//			List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
+//					.get("intentInfoList");
+//			IntentsAppList intentsAppList = new IntentsAppList(
+//					intentsAppInfoList, this.getActivity());
+//			fragmentTransaction.add(android.R.id.content, intentsAppList);
+//			fragmentTransaction.addToBackStack(null);
+//			fragmentTransaction.commit();
+//		} catch (Exception e) {
+//
+//		} finally {
+//
+//		}
 
 	}
 }
