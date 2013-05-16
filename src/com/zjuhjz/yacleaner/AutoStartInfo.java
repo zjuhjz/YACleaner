@@ -105,6 +105,7 @@ public class AutoStartInfo {
 				appItem = new HashMap<String, Object>();
 				appInfoList.add(appItem);
 				appItem.put("appName", appName);
+				appItem.put("appIcon", intentFilterInfo.componentInfo.packageInfo.icon);
 				appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
 				appItem.put("intentInfoList", appIntentsInfoList);
 				

@@ -48,15 +48,15 @@ public class AutoStartAppList extends ListFragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// super.onCreateView(inflater, container, savedInstanceState);
-		View view = inflater.inflate(R.layout.activity_process_list, container,
+		View view = inflater.inflate(R.layout.activity_autostart_app_list, container,
 				false);
-		final View button = view.findViewById(R.id.clean);
-		button.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showAppInfo();
-			}
-		});
+		//final View button = view.findViewById(R.id.clean);
+//		button.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				showAppInfo();
+//			}
+//		});
 		return view;
 	}
 
@@ -65,8 +65,8 @@ public class AutoStartAppList extends ListFragment implements
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
 				autoStartInfo.appInfoList,
 				R.layout.autostart_app_list_item,
-				new String[] { "appName" },
-				new int[] { R.id.autostart_app_name });
+				new String[] { "appIcon","appName" },
+				new int[] { R.id.autostart_app_icon,R.id.autostart_app_name });
 		setListAdapter(autoStartAppListAdapter);
 	}
 

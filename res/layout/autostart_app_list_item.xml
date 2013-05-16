@@ -8,14 +8,22 @@
    android:orientation="horizontal"
    android:listSelector="@drawable/list_item_selector"
    >
-    <TextView android:id="@+id/autostart_app_name" 
-       android:layout_width="0dp" 
-       android:layout_height="wrap_content"
-       android:layout_marginLeft="10dp"
-       android:layout_weight="1"/>
-    <TextView android:id="@+id/process_memory" 
-       android:layout_width="50dp" 
-       android:layout_height="wrap_content"
-       android:layout_gravity="right"
-       android:layout_marginRight="10dp"/>
+   	<ImageView 
+   	    android:id="@+id/autostart_app_icon"
+   	    android:contentDescription="icon"
+   	    android:layout_width="50dp" 
+	   	android:layout_height="50dp"
+   	    >
+   	</ImageView>
+	
+	<TextView android:id="@+id/autostart_app_name" 
+	   android:layout_width="0dp" 
+	   android:layout_height="wrap_content"
+	   android:layout_marginLeft="10dp"
+	   android:layout_weight="1"/>
+	<TextView android:id="@+id/process_memory" 
+	   android:layout_width="50dp" 
+	   android:layout_height="wrap_content"
+	   android:layout_gravity="right"
+	   android:layout_marginRight="10dp"/>
 </LinearLayout>
