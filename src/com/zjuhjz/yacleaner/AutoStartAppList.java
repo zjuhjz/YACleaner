@@ -20,7 +20,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -43,6 +47,7 @@ public class AutoStartAppList extends ListFragment implements
 		autoStartInfo = new AutoStartInfo(getActivity());
 		this.getListView().setOnItemClickListener(this);
 		showAppInfo();
+		registerForContextMenu(getListView());  
 	}
 
 	@Override
@@ -53,6 +58,14 @@ public class AutoStartAppList extends ListFragment implements
 				false);
 		return view;
 	}
+	@Override 
+	public void onCreateContextMenu(ContextMenu menu, View v,  
+            ContextMenuInfo menuInfo) {  
+        // TODO Auto-generated method stub  
+        MenuInflater inflater = getActivity().getMenuInflater();  
+        inflater.inflate(R.menu.autostartapp_contextmenu, menu);  
+        super.onCreateContextMenu(menu, v, menuInfo);  
+    }  
 
 	private void showAppInfo() {
 		Context context = getActivity();
@@ -64,29 +77,31 @@ public class AutoStartAppList extends ListFragment implements
 		setListAdapter(autoStartAppListAdapter);
 	}
 
+	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		// Log.d(TAG, "click position:"+position);
-
-
-		
-		
-		
-		FragmentManager fragmentManager = getFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager
-				.beginTransaction();
-		HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
-				.get(position);
-		@SuppressWarnings("unchecked")
-		List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
-				.get("intentInfoList");
-		MenuSetAutostartApp intentsAppList = new MenuSetAutostartApp(
-				intentsAppInfoList, this.getActivity());
-		fragmentTransaction.add(android.R.id.content, intentsAppList);
-		fragmentTransaction.addToBackStack(null);
-		fragmentTransaction.commit();
-		
+		arg1.showContextMenu();
+//		// Log.d(TAG, "click position:"+position);
+//
+//
+//		
+//		
+//		
+//		FragmentManager fragmentManager = getFragmentManager();
+//		FragmentTransaction fragmentTransaction = fragmentManager
+//				.beginTransaction();
+//		HashMap<String, Object> appIntentsInfo = autoStartInfo.appInfoList
+//				.get(position);
+//		@SuppressWarnings("unchecked")
+//		List<HashMap<String, Object>> intentsAppInfoList = (List<HashMap<String, Object>>) appIntentsInfo
+//				.get("intentInfoList");
+//		MenuSetAutostartApp intentsAppList = new MenuSetAutostartApp(
+//				intentsAppInfoList, this.getActivity());
+//		fragmentTransaction.add(android.R.id.content, intentsAppList);
+//		fragmentTransaction.addToBackStack(null);
+//		fragmentTransaction.commit();
+//		
 //		try {
 //			FragmentManager fragmentManager = getFragmentManager();
 //			FragmentTransaction fragmentTransaction = fragmentManager
@@ -109,4 +124,10 @@ public class AutoStartAppList extends ListFragment implements
 //		}
 
 	}
+	
+	 @Override  
+	 public boolean onContextItemSelected(MenuItem item) { 
+		 
+		 return super.onContextItemSelected(item);
+	 }
 }
