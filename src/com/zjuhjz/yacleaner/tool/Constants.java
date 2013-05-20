@@ -1,7 +1,7 @@
 package com.zjuhjz.yacleaner.tool;
 
 public class Constants {
-	public static String[][] broadcastActions={
+	final public static String[][] broadcastActions={
 			{"android.app.action.ACTION_PASSWORD_CHANGED",""},
 			{"android.app.action.ACTION_PASSWORD_EXPIRING",""},
 			{"android.app.action.ACTION_PASSWORD_FAILED",""},
@@ -122,5 +122,12 @@ public class Constants {
 			{"android.net.wifi.supplicant.STATE_CHANGE",""},
 			{"android.speech.tts.TTS_QUEUE_PROCESSING_COMPLETED",""},
 			{"android.speech.tts.engine.TTS_DATA_INSTALLED",""},
-};
+	};
+	
+	final public static String[] gentleIntentsList={
+		"android.intent.action.BOOT_COMPLETED",
+		"android.intent.action.PACKAGE_ADDED",
+		"android.intent.action.MEDIA_MOUNTED",
+		"android.intent.action.PACKAGE_CHANGED",
+	};
 }
