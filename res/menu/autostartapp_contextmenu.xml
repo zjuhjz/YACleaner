@@ -3,5 +3,6 @@
     <item android:id="@+id/block_gentle" android:title="@string/menu_set_autostart_1" />  
     <item android:id="@+id/block_strong" android:title="@string/menu_set_autostart_2" />  
     <item android:id="@+id/block_complete" android:title="@string/menu_set_autostart_3" />  
-    <item android:id="@+id/block_youself" android:title="@string/menu_set_autostart_4" />  
+    <item android:id="@+id/unblock" android:title="@string/menu_set_autostart_4" />  
+    <item android:id="@+id/block_youself" android:title="@string/menu_set_autostart_5" />  
 </menu>  
