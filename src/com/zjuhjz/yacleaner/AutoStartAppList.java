@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zjuhjz.yacleaner.customclass.AutoStartAppListAdapter;
+import com.zjuhjz.yacleaner.adapter.AutoStartAppListAdapter;
 import com.zjuhjz.yacleaner.tool.Constants;
 
 import android.Manifest.permission;

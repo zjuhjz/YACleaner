@@ -3,8 +3,8 @@ package com.zjuhjz.yacleaner;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zjuhjz.yacleaner.customclass.IntentAppListAdapter;
-import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
+import com.zjuhjz.yacleaner.adapter.IntentAppListAdapter;
+import com.zjuhjz.yacleaner.adapter.ProcessListAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

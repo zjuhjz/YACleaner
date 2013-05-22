@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner.customclass;
+package com.zjuhjz.yacleaner.adapter;
 
 import java.util.HashMap;
 import java.util.List;

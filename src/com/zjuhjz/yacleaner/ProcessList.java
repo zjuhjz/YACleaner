@@ -18,7 +18,10 @@ import android.widget.TextView;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.app.ActivityManager;
-import com.zjuhjz.yacleaner.customclass.ProcessListAdapter;
+
+import com.zjuhjz.yacleaner.adapter.ProcessListAdapter;
+import com.zjuhjz.yacleaner.db.YAProcessInfo;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import android.content.Context;
@@ -50,12 +53,10 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		Log.d(TAG, "menu begin to set");
 		MenuItem populateItem = menu.add(Menu.NONE, REFRESH_ID, 0, "Refresh");
 		populateItem.setIcon(R.drawable.ic_menu_refresh);
 		MenuItemCompat.setShowAsAction(populateItem,
 				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-		Log.d(TAG, "menu set");
 	}
 
 	@Override
@@ -72,7 +73,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 				showProcessInfo();
 			}
 		});
-
 		return view;
 	}
 
@@ -95,12 +95,19 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		Context context = getActivity();
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
-		HashMap<String, String> processitem;
-		for (Iterator<HashMap<String, String>> iterator = yaMemoryInfo.processInfoList
+		HashMap<String, Object> processitem;
+		YAProcessInfo yaProcessInfo;
+		for (Iterator<HashMap<String, Object>> iterator = yaMemoryInfo.processInfoList
 				.iterator(); iterator.hasNext();) {
 			processitem = iterator.next();
-			activityManager.killBackgroundProcesses(processitem
+			yaProcessInfo = yaMemoryInfo.yaProcessInfoList.get(processitem
 					.get("package_name"));
+			for(String processName:yaProcessInfo.processNameList){
+				activityManager.killBackgroundProcesses(processName);
+			}
+			
+//			activityManager.killBackgroundProcesses(processitem
+//					.get("package_name"));
 		}
 	}
 
@@ -127,14 +134,16 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			long arg3) {
 		Log.d("yacleanerdebug", position + "");
 		arg1.setSelected(true);
-		HashMap<String,String> processInfo = yaMemoryInfo.processInfoList.get(position);
+		HashMap<String,Object> processInfo = yaMemoryInfo.processInfoList.get(position);
 		if(processInfo.get("whitelist")=="0"){
 			processInfo.put("whitelist", "1");
-			yaMemoryInfo.addToWhiteList(processInfo.get("package_name"));
+			yaMemoryInfo.addToWhiteList((String)processInfo.get("package_name"));
+			Log.d(TAG, processInfo.get("package_name")+"added");
 		}
 		else{
 			processInfo.put("whitelist", "0");
-			yaMemoryInfo.removeFromWhiteList(processInfo.get("package_name"));
+			yaMemoryInfo.removeFromWhiteList((String)processInfo.get("package_name"));
+			Log.d(TAG, processInfo.get("package_name")+"removed");
 		}
 		simpleAdapter.notifyDataSetChanged();
 	}

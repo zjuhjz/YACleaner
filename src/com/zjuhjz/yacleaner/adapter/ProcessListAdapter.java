@@ -1,14 +1,17 @@
-package com.zjuhjz.yacleaner.customclass;
+package com.zjuhjz.yacleaner.adapter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.zjuhjz.yacleaner.R;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 
 
@@ -16,10 +19,10 @@ import android.widget.SimpleAdapter;
 public class ProcessListAdapter extends SimpleAdapter {
 	private static final String TAG = "yacleanerlog";
 	private String[] colours = new String[] {"#CCCCCC", "#FFFFFF"};
-	private List<? extends Map<String, ?>> data;
-	HashMap<String,String> processInfo;
+	private List<HashMap<String, Object>> data;
+	HashMap<String,Object> processInfo;
 	public ProcessListAdapter(Context context,
-			List<? extends Map<String, ?>> data, int resource, String[] from,
+			List<HashMap<String, Object>> data, int resource, String[] from,
 			int[] to) {
 		super(context, data, resource, from, to);
 		this.data=data;
@@ -30,11 +33,10 @@ public class ProcessListAdapter extends SimpleAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
 		View view = super.getView(position, convertView, parent);
-		//view.setBackgroundColor(Color.parseColor(colours[position % colours.length]));
-		//
+		ImageView imageView = (ImageView)view.findViewById(R.id.process_list_app_icon);
 		view.setBackgroundColor(Color.parseColor("#FFFFFF"));
-		//view.setBackgroundColor();
-		processInfo = (HashMap<String,String> )data.get(position);
+		processInfo = (HashMap<String, Object> )data.get(position);
+		//imageView.setImageResource((Integer)processInfo.get("icon"));
 		if (processInfo.get("whitelist")=="1"){
 			view.setBackgroundColor(Color.parseColor("#00FFFF"));
 		}

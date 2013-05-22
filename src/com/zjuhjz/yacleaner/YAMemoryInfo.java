@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -17,9 +20,11 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
 import com.zjuhjz.yacleaner.tool.*;
+import com.zjuhjz.yacleaner.db.YAProcessInfo;
 
 public class YAMemoryInfo {
 	public long totalMemory;
@@ -31,16 +36,18 @@ public class YAMemoryInfo {
 	private static final String TAG = "yacleanerlog";
 	private static MemoryInfo mi = new MemoryInfo();
 	public List<String> whiteList = new ArrayList<String>();
+	HashMap<String, YAProcessInfo> yaProcessInfoList;
 	// static final int POPULATE_ID = Menu.FIRST;
 	// static final int CLEAR_ID = Menu.FIRST + 1;
 
 	Context context;
-	List<HashMap<String, String>> processInfoList;
+	List<HashMap<String, Object>> processInfoList;
 	List<HashMap<String, String>> servicesInfoList;
+	YAProcessInfo yaProcessInfo;
 	CMDExecute cmdExecute = new CMDExecute();
 
 	YAMemoryInfo(Context context) {
-		processInfoList = new ArrayList<HashMap<String, String>>();
+		processInfoList = new ArrayList<HashMap<String, Object>>();
 		servicesInfoList = new ArrayList<HashMap<String, String>>();
 		this.context = context;
 		activityManager = (ActivityManager) context
@@ -137,53 +144,109 @@ public class YAMemoryInfo {
 			}
 
 		}
-
-		// add info to processInfoList
 		RunningAppProcessInfo procInfo;
+		yaProcessInfoList = new HashMap<String, YAProcessInfo>();
+		
 		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
 				.iterator(); iterator.hasNext();) {
 			procInfo = iterator.next();
-			HashMap<String, String> map = new HashMap<String, String>();
 			try {
-				ai = pm.getApplicationInfo(procInfo.processName, 0);
-			} catch (final NameNotFoundException e) {
+				ai = pm.getApplicationInfo(procInfo.pkgList[0], 0);
+			} catch (final NameNotFoundException e){
 				ai = null;
 			}
 			final String applicationName = (String) (ai != null ? pm
 					.getApplicationLabel(ai) : procInfo.processName);
-			map.put("app_name", applicationName);
-			map.put("package_name", procInfo.processName);
-			map.put("pid", procInfo.pid + "");
-			map.put("memory_usage", memoryUsage.get(procInfo.processName)
-					+ "MB");
-			map.put("whitelist", whiteList.contains(procInfo.processName) ? "1"
-					: "0");
-			//TODO add a filter
-			if(ai!=null){
-				map.put("is_system_app", (ai.flags&ai.FLAG_SYSTEM)+"");
-			}else{
-				//Log.d(TAG,"this app's ApplicationInfo is missing:"+applicationName);
+			if (yaProcessInfoList.containsKey(ai.packageName)) {
+				yaProcessInfo = yaProcessInfoList.get(ai.packageName);
+			} else {
+				yaProcessInfo = new YAProcessInfo();
+				yaProcessInfo.appName = applicationName;
+				yaProcessInfo.processName = procInfo.processName;
+				yaProcessInfo.packageName = ai.packageName;
+				yaProcessInfo.iconResourceId = ai.icon;
+				yaProcessInfo.isWhiteList = whiteList
+						.contains(ai.packageName);
+				yaProcessInfo.isSystemApp = ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+				yaProcessInfoList.put(yaProcessInfo.packageName, yaProcessInfo);
 			}
 			
+			yaProcessInfo.pid.add(procInfo.pid);
+			yaProcessInfo.processNameList.add(procInfo.processName);
+			try{
+				yaProcessInfo.totalMemoryUsage += Integer.parseInt(memoryUsage.get(procInfo.processName));
+			}
+			catch(Exception e){
+				yaProcessInfo.totalMemoryUsage += 0;
+			}
+			
+			
+		}
+
+		YAProcessInfo  yaProcessInfo; 
+		Log.d(TAG, "total:"+yaProcessInfoList.size());
+		// add info to processInfoList
+		for (Map.Entry<String, YAProcessInfo> entry :yaProcessInfoList.entrySet()){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			yaProcessInfo = entry.getValue();
+			map.put("app_name", yaProcessInfo.appName);
+			map.put("package_name", yaProcessInfo.packageName);
+			//map.put("pid", yaProcessInfo.pid + "");
+			map.put("memory_usage", yaProcessInfo.totalMemoryUsage
+					+ "MB");
+			map.put("whitelist", yaProcessInfo.isWhiteList ? "1"
+					: "0");
+			// TODO add a filter
+			map.put("is_system_app", yaProcessInfo.isSystemApp? "1":"0");
+			map.put("icon", yaProcessInfo.iconResourceId);
 			processInfoList.add(map);
 		}
+		
+//
+//		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
+//				.iterator(); iterator.hasNext();) {
+//			procInfo = iterator.next();
+//			HashMap<String, String> map = new HashMap<String, String>();
+//			try {
+//				ai = pm.getApplicationInfo(procInfo.processName, 0);
+//			} catch (final NameNotFoundException e) {
+//				ai = null;
+//			}
+//			final String applicationName = (String) (ai != null ? pm
+//					.getApplicationLabel(ai) : procInfo.processName);
+//			map.put("app_name", applicationName);
+//			map.put("package_name", procInfo.processName);
+//			map.put("pid", procInfo.pid + "");
+//			map.put("memory_usage", memoryUsage.get(procInfo.processName)
+//					+ "MB");
+//			map.put("whitelist", whiteList.contains(procInfo.processName) ? "1"
+//					: "0");
+//			// TODO add a filter
+//			if (ai != null) {
+//				map.put("is_system_app", (ai.flags & ai.FLAG_SYSTEM) + "");
+//			} else {
+//				// Log.d(TAG,"this app's ApplicationInfo is missing:"+applicationName);
+//			}
+//
+//			processInfoList.add(map);
+//		}
 		Collections.sort(processInfoList, new ComparatorProcessList());
 		return runningAppProcesses.size();
 	}
 
-	public boolean addToWhiteList(String PackageName) {
-		if (!whiteList.contains(PackageName)) {
-			whiteList.add(PackageName);
+	public boolean addToWhiteList(String packageName) {
+		if (!whiteList.contains(packageName)) {
+			whiteList.add(packageName);
 			saveWhiteList();
 		}
 
 		return true;
 	}
 
-	public boolean removeFromWhiteList(String PackageName) {
-		if (whiteList.contains(PackageName)) {
-			whiteList.remove(PackageName);
-			Log.d(TAG, "remove "+ PackageName);
+	public boolean removeFromWhiteList(String packageName) {
+		if (whiteList.contains(packageName)) {
+			whiteList.remove(packageName);
+			Log.d(TAG, "remove " + packageName);
 			saveWhiteList();
 		}
 		return true;
@@ -191,8 +254,8 @@ public class YAMemoryInfo {
 
 	private boolean saveWhiteList() {
 		StringBuffer fileContent = new StringBuffer("");
-		HashMap<String, String> procInfo;
-		for (Iterator<HashMap<String, String>> iterator = processInfoList
+		HashMap<String, Object> procInfo;
+		for (Iterator<HashMap<String, Object>> iterator = processInfoList
 				.iterator(); iterator.hasNext();) {
 			procInfo = iterator.next();
 			if (procInfo.get("whitelist") == "1") {

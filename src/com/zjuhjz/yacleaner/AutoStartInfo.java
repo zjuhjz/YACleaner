@@ -97,7 +97,7 @@ public class AutoStartInfo {
 			appName = intentFilterInfo.componentInfo.packageInfo.packageLabel == null ? intentFilterInfo.componentInfo.packageInfo.packageName
 					: intentFilterInfo.componentInfo.packageInfo.packageLabel;
 			intentName = intentFilterInfo.action;
-			Log.d(TAG,"first action : "+appName);
+			//Log.d(TAG,"first action : "+appName);
 			if (!broadcastActions.contains(intentName)) {
 				continue;
 			}
