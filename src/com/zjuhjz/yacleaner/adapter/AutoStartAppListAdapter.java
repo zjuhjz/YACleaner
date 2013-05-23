@@ -7,18 +7,13 @@ import java.util.Map;
 import com.zjuhjz.yacleaner.R;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 public class AutoStartAppListAdapter extends SimpleAdapter {
-	private static final String TAG = "yacleanerlog";
-	// private String[] colours = new String[] {"#CCCCCC", "#FFFFFF"};
 	private List<HashMap<String, Object>>  data;
 	// HashMap<String,String> processInfo;
 

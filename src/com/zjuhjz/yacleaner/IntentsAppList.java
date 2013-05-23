@@ -4,11 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.zjuhjz.yacleaner.adapter.IntentAppListAdapter;
-import com.zjuhjz.yacleaner.adapter.ProcessListAdapter;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -16,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 @SuppressLint("ValidFragment")

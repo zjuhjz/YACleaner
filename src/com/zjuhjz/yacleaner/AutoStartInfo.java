@@ -7,17 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.ResolveInfo;
 import android.util.Log;
 
 import com.zjuhjz.yacleaner.db.IntentFilterInfo;
-import com.zjuhjz.yacleaner.tool.ComparatorIntentFilterList;
-import com.zjuhjz.yacleaner.tool.ComparatorProcessList;
 import com.zjuhjz.yacleaner.tool.Constants;
 
 //TODO optimize AutoStartInfo data structure.change 
@@ -66,10 +59,8 @@ public class AutoStartInfo {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private void load() {
 		String intentName;
-		Intent intent;
 		ReceiverReader receiverReader = new ReceiverReader(context, null);
 		ArrayList<IntentFilterInfo> info = receiverReader.load();
 		// sort
@@ -97,7 +88,7 @@ public class AutoStartInfo {
 			appName = intentFilterInfo.componentInfo.packageInfo.packageLabel == null ? intentFilterInfo.componentInfo.packageInfo.packageName
 					: intentFilterInfo.componentInfo.packageInfo.packageLabel;
 			intentName = intentFilterInfo.action;
-			//Log.d(TAG,"first action : "+appName);
+			// Log.d(TAG,"first action : "+appName);
 			if (!broadcastActions.contains(intentName)) {
 				continue;
 			}
@@ -105,10 +96,11 @@ public class AutoStartInfo {
 				appItem = new HashMap<String, Object>();
 				appInfoList.add(appItem);
 				appItem.put("appName", appName);
-				appItem.put("appIcon", intentFilterInfo.componentInfo.packageInfo.icon);
+				appItem.put("appIcon",
+						intentFilterInfo.componentInfo.packageInfo.icon);
 				appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
 				appItem.put("intentInfoList", appIntentsInfoList);
-				
+
 			}
 			appIntentsInfo = new HashMap<String, Object>();
 			appIntentsInfo.put("component_name",
@@ -125,15 +117,15 @@ public class AutoStartInfo {
 					intentFilterInfo.componentInfo.defaultEnabled);
 			appIntentsInfo.put("icon",
 					intentFilterInfo.componentInfo.packageInfo.icon);
-			appIntentsInfo.put("intentName",intentName);
-			appIntentsInfo.put("display",intentName+"\n"+intentFilterInfo.componentInfo.componentName);
+			appIntentsInfo.put("intentName", intentName);
+			appIntentsInfo.put("display", intentName + "\n"
+					+ intentFilterInfo.componentInfo.componentName);
 			appIntentsInfoList.add(appIntentsInfo);
 
 			lastAppName = appName;
 
 		}
-		Log.d(TAG, "the total size :"+appInfoList.size());
-		
+		Log.d(TAG, "the total size :" + appInfoList.size());
 
 		for (IntentFilterInfo intentFilterInfo : info) {
 			intentName = intentFilterInfo.action;

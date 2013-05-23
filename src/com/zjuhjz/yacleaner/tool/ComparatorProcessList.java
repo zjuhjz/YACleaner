@@ -2,9 +2,6 @@ package com.zjuhjz.yacleaner.tool;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 
 
 public class ComparatorProcessList implements  Comparator<Object> {

@@ -28,6 +28,7 @@ public final class R {
         public static final int com_zjuhjz_yacleaner_IntentsAppList_appname=0x7f070009;
         public static final int menu_item_set_autostart_app_item_name=0x7f07000a;
         public static final int menu_settings=0x7f07000d;
+        public static final int process_addto_whitelist=0x7f070013;
         public static final int process_list_app_icon=0x7f07000b;
         public static final int process_memory=0x7f070008;
         public static final int process_name=0x7f07000c;
@@ -50,6 +51,7 @@ public final class R {
         public static final int activity_main=0x7f060000;
         public static final int activity_process_list=0x7f060001;
         public static final int autostartapp_contextmenu=0x7f060002;
+        public static final int processlist_contextmenu=0x7f060003;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
@@ -62,6 +64,8 @@ public final class R {
         public static final int menu_set_autostart_5=0x7f04000a;
         public static final int menu_settings=0x7f040002;
         public static final int nodata=0x7f040005;
+        public static final int process_addto_whitelist=0x7f04000b;
+        public static final int process_removefrom_whitelist=0x7f04000c;
         public static final int title_activity_process_list=0x7f040003;
     }
     public static final class style {

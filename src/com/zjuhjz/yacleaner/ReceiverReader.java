@@ -313,10 +313,6 @@ public class ReceiverReader {
 						"for receiver "+mCurrentComponent.componentName+
 						" in package "+mCurrentPackage.packageName+": "+priorityRaw);
 			}
-			if (LOGV && mCurrentFilterPriority != 0)
-				Log.v(TAG, "Receiver "+mCurrentComponent.componentName+
-						" in package "+mCurrentPackage.packageName+" has "+
-				"an intent filter with priority != 0");
     }
 
 	void endIntentFilter() {

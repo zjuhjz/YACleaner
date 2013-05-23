@@ -4,11 +4,13 @@ package com.zjuhjz.yacleaner;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -43,14 +45,27 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		setHasOptionsMenu(true);
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
 		//this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		this.getListView().setOnItemClickListener(this);
+		registerForContextMenu(getListView());
 		showProcessInfo();
 	}
 
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		// TODO Auto-generated method stub
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.processlist_contextmenu, menu);
+		MenuItem menuItem = menu.getItem(0);
+		menuItem.setTitle(getResources().getString(R.string.process_removefrom_whitelist));
+		Log.d(TAG, "on create context menu");
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		MenuItem populateItem = menu.add(Menu.NONE, REFRESH_ID, 0, "Refresh");
@@ -132,8 +147,11 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
+		arg1.showContextMenu();
+		
+		/*
 		Log.d("yacleanerdebug", position + "");
-		arg1.setSelected(true);
+		//arg1.setSelected(true);
 		HashMap<String,Object> processInfo = yaMemoryInfo.processInfoList.get(position);
 		if(processInfo.get("whitelist")=="0"){
 			processInfo.put("whitelist", "1");
@@ -146,6 +164,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			Log.d(TAG, processInfo.get("package_name")+"removed");
 		}
 		simpleAdapter.notifyDataSetChanged();
+		*/
 	}
 
 }

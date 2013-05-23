@@ -9,16 +9,12 @@ import com.zjuhjz.yacleaner.R;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class IntentAppListAdapter extends SimpleAdapter {
-	private static final String TAG = "yacleanerlog";
-	// private String[] colours = new String[] {"#CCCCCC", "#FFFFFF"};
 	private List<? extends Map<String, ?>> data;
 	HashMap<String, Object> intentsAppInfo = null;
 	int enableState;

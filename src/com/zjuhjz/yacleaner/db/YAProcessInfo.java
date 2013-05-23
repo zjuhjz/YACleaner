@@ -15,7 +15,7 @@ public class YAProcessInfo{
 	public long totalMemoryUsage;
 	public List<String> processNameList;
 	public List<Integer> pid;
-	public int iconResourceId;
+	public Drawable icon;
 	
 	public YAProcessInfo(){
 		totalMemoryUsage = 0;

@@ -12,5 +12,6 @@
     <string name="menu_set_autostart_3">complete</string>
     <string name="menu_set_autostart_4">unblock</string>
     <string name="menu_set_autostart_5">block self</string>
-
+	<string name="process_addto_whitelist">add to white list</string>
+	<string name="process_removefrom_whitelist">remove from white list</string>
 </resources>
