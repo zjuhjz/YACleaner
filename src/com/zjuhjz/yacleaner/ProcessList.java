@@ -14,6 +14,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 import android.widget.TextView;
@@ -61,9 +62,33 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		MenuInflater inflater = getActivity().getMenuInflater();
 		inflater.inflate(R.menu.processlist_contextmenu, menu);
 		MenuItem menuItem = menu.getItem(0);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		HashMap<String, Object> processInfo= yaMemoryInfo.processInfoList.get(info.position);
+		
+		
 		menuItem.setTitle(getResources().getString(R.string.process_removefrom_whitelist));
 		Log.d(TAG, "on create context menu");
 		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if(id==R.id.process_addto_whitelist){
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+					.getMenuInfo();
+			HashMap<String,Object> processInfo= yaMemoryInfo.processInfoList.get(info.position);
+			if(processInfo.get("whitelist")=="0"){
+				processInfo.put("whitelist", "1");
+				yaMemoryInfo.addToWhiteList((String)processInfo.get("package_name"));
+				Log.d(TAG, processInfo.get("package_name")+"added");
+			}
+			else{
+				processInfo.put("whitelist", "0");
+				yaMemoryInfo.removeFromWhiteList((String)processInfo.get("package_name"));
+				Log.d(TAG, processInfo.get("package_name")+"removed");
+			}
+		}
+		return super.onContextItemSelected(item);
 	}
 	
 	@Override
@@ -120,9 +145,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			for(String processName:yaProcessInfo.processNameList){
 				activityManager.killBackgroundProcesses(processName);
 			}
-			
-//			activityManager.killBackgroundProcesses(processitem
-//					.get("package_name"));
 		}
 	}
 
