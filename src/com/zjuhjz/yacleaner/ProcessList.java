@@ -38,7 +38,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	static final int CLEAR_ID = Menu.FIRST + 1;
 	ProcessListAdapter simpleAdapter;
 
-	//white list
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,6 +55,10 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		showProcessInfo();
 	}
 
+	/*
+	 * Change context menu title at run time
+	 * @see android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -64,10 +68,13 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		MenuItem menuItem = menu.getItem(0);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		HashMap<String, Object> processInfo= yaMemoryInfo.processInfoList.get(info.position);
-		
-		
-		menuItem.setTitle(getResources().getString(R.string.process_removefrom_whitelist));
-		Log.d(TAG, "on create context menu");
+		if(processInfo.get("whitelist")=="0"){
+			menuItem.setTitle(getResources().getString(R.string.process_addto_whitelist));
+		}
+		else{
+			menuItem.setTitle(getResources().getString(R.string.process_removefrom_whitelist));
+		}
+		//Log.d(TAG, "on create context menu");
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 	@Override
@@ -88,6 +95,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 				Log.d(TAG, processInfo.get("package_name")+"removed");
 			}
 		}
+		simpleAdapter.notifyDataSetChanged();
 		return super.onContextItemSelected(item);
 	}
 	
@@ -109,7 +117,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				killAllProcesses();
+				yaMemoryInfo.killProcesses(YAMemoryInfo.KILL_PROCESSES_EXCEPT_WHITELIST);
 				showProcessInfo();
 			}
 		});
@@ -131,22 +139,24 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		super.onPause();
 	}
 	
-	public void killAllProcesses() {
-		Context context = getActivity();
-		ActivityManager activityManager = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
-		HashMap<String, Object> processitem;
-		YAProcessInfo yaProcessInfo;
-		for (Iterator<HashMap<String, Object>> iterator = yaMemoryInfo.processInfoList
-				.iterator(); iterator.hasNext();) {
-			processitem = iterator.next();
-			yaProcessInfo = yaMemoryInfo.yaProcessInfoList.get(processitem
-					.get("package_name"));
-			for(String processName:yaProcessInfo.processNameList){
-				activityManager.killBackgroundProcesses(processName);
-			}
-		}
-	}
+	
+	
+//	public void killAllProcesses() {
+//		Context context = getActivity();
+//		ActivityManager activityManager = (ActivityManager) context
+//				.getSystemService(Context.ACTIVITY_SERVICE);
+//		HashMap<String, Object> processitem;
+//		YAProcessInfo yaProcessInfo;
+//		for (Iterator<HashMap<String, Object>> iterator = yaMemoryInfo.processInfoList
+//				.iterator(); iterator.hasNext();) {
+//			processitem = iterator.next();
+//			yaProcessInfo = yaMemoryInfo.yaProcessInfoList.get(processitem
+//					.get("package_name"));
+//			for(String processName:yaProcessInfo.processNameList){
+//				activityManager.killBackgroundProcesses(processName);
+//			}
+//		}
+//	}
 
 	public void showProcessInfo() {
 		// initial and refresh memoryinfo
