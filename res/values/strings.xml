@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">YACleaner</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
@@ -11,7 +10,7 @@
     <string name="menu_set_autostart_2">strong</string>
     <string name="menu_set_autostart_3">complete</string>
     <string name="menu_set_autostart_4">unblock</string>
-    <string name="menu_set_autostart_5">block self</string>
-	<string name="process_addto_whitelist">add to white list</string>
-	<string name="process_removefrom_whitelist">remove from white list</string>
+    <string name="menu_set_autostart_5">Block Yourself</string>
+	<string name="process_addto_whitelist">Add to Whitelist</string>
+	<string name="process_removefrom_whitelist">Remove from Whitelist</string>
 </resources>

@@ -16,10 +16,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.ListFragment;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +36,8 @@ public class AutoStartAppList extends ListFragment implements
 	AutoStartAppListAdapter autoStartAppListAdapter;
 	public static final String TAG = "yacleanerlog";
 	AutoStartInfo autoStartInfo;
-
+	static final int INCLUDE_SYSTEM_ID = Menu.FIRST;
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -55,6 +58,28 @@ public class AutoStartAppList extends ListFragment implements
 		return view;
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		MenuItem populateItem = menu.add(Menu.NONE, INCLUDE_SYSTEM_ID, 0, "All App");
+		populateItem.setIcon(R.drawable.ic_include_system_package);
+		MenuItemCompat.setShowAsAction(populateItem,
+				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case INCLUDE_SYSTEM_ID:
+			if(autoStartInfo!=null&&autoStartAppListAdapter!=null){
+				autoStartInfo.changeIncludeSystemFlag();
+				autoStartAppListAdapter.notifyDataSetChanged();
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
