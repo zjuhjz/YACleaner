@@ -59,9 +59,8 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 				                  listView,
 				                  new SwipeDismissListViewTouchListener.OnDismissCallback() {
 				                      public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-				                    	  Toast.makeText(getActivity(), "dismiss", Toast.LENGTH_SHORT).show();
 				                          for (int position : reverseSortedPositions) {
-				                              //simpleAdapter.remove(simpleAdapter.getItem(position));
+				                        	  yaMemoryInfo.killProcess(position);
 				                          }
 				                          simpleAdapter.notifyDataSetChanged();
 				                      }

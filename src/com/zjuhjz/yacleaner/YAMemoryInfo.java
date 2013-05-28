@@ -19,6 +19,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.zjuhjz.yacleaner.tool.*;
 import com.zjuhjz.yacleaner.db.YAProcessInfo;
 
@@ -274,9 +276,27 @@ public class YAMemoryInfo {
 				continue;
 			}
 			yaProcessInfo = yaProcessInfoList.get(packageName);
-			for (String processName : yaProcessInfo.processNameList) {
-				activityManager.killBackgroundProcesses(processName);
-			}
+			activityManager.killBackgroundProcesses(packageName);
+//			for (String processName : yaProcessInfo.processNameList) {
+//				activityManager.killBackgroundProcesses(processName);
+//			}
 		}
+	}
+	
+	public boolean killProcess(int position){
+		if(processInfoList!=null){
+			HashMap<String, Object> processitem = processInfoList.get(position);
+			String packageName =   (String) processitem.get("package_name");
+			String appName =   (String) processitem.get("app_name");
+			activityManager.killBackgroundProcesses(packageName);
+			/*
+			 * Fakely remove the listItem.
+			 */
+			yaProcessInfoList.remove(packageName);
+			processInfoList.remove(position);
+			Toast.makeText(context, appName+" killed", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
 	}
 }

@@ -37,5 +37,12 @@ public class ProcessListAdapter extends SimpleAdapter {
 		}
 		return view;
 	}
+	
+	public boolean remove(int position){
+		if(data!=null){
+			data.remove(position);
+		}
+		return true;
+	}
 
 }

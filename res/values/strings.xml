@@ -6,10 +6,10 @@
     <string name="title_activity_process_list">ProcessList</string>
     <string name="cleanbtn">clean</string>
     <string name="nodata">No data</string>
-    <string name="menu_set_autostart_1">gentle</string>
-    <string name="menu_set_autostart_2">strong</string>
-    <string name="menu_set_autostart_3">complete</string>
-    <string name="menu_set_autostart_4">unblock</string>
+    <string name="menu_set_autostart_1">Block gently</string>
+    <string name="menu_set_autostart_2">Block strongly</string>
+    <string name="menu_set_autostart_3">Block completely</string>
+    <string name="menu_set_autostart_4">Unblock All</string>
     <string name="menu_set_autostart_5">Block Yourself</string>
 	<string name="process_addto_whitelist">Add to Whitelist</string>
 	<string name="process_removefrom_whitelist">Remove from Whitelist</string>
