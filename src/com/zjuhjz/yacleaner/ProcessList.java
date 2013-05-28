@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import android.widget.TextView;
 import android.support.v4.app.ListFragment;
@@ -30,7 +32,7 @@ import java.util.Iterator;
 import android.content.Context;
 
 public class ProcessList extends ListFragment implements OnItemClickListener {
-	private static final String TAG = "yacleanerlog";
+	public static final String TAG = "yacleanerlog";
 
 	//private static List<RunningAppProcessInfo> procList = null;
 	YAMemoryInfo yaMemoryInfo;
@@ -51,6 +53,25 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
 		//this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		this.getListView().setOnItemClickListener(this);
+		ListView listView = this.getListView();
+		SwipeDismissListViewTouchListener touchListener =
+		new SwipeDismissListViewTouchListener(
+				                  listView,
+				                  new SwipeDismissListViewTouchListener.OnDismissCallback() {
+				                      public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+				                    	  Toast.makeText(getActivity(), "dismiss", Toast.LENGTH_SHORT).show();
+				                          for (int position : reverseSortedPositions) {
+				                              //simpleAdapter.remove(simpleAdapter.getItem(position));
+				                          }
+				                          simpleAdapter.notifyDataSetChanged();
+				                      }
+				                  });
+		listView.setOnTouchListener(touchListener);
+		listView.setOnScrollListener(touchListener.makeScrollListener());
+		
+		
+		
+		
 		registerForContextMenu(getListView());
 		showProcessInfo();
 	}

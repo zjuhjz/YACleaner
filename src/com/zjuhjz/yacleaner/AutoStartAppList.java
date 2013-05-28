@@ -87,7 +87,7 @@ public class AutoStartAppList extends ListFragment implements
 		MenuInflater inflater = getActivity().getMenuInflater();
 		inflater.inflate(R.menu.autostartapp_contextmenu, menu);
 		super.onCreateContextMenu(menu, v, menuInfo);
-	}
+	} 
 
 	private void showAppInfo() {
 		Context context = getActivity();
