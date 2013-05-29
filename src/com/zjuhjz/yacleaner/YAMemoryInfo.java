@@ -33,7 +33,7 @@ public class YAMemoryInfo {
 	public long availableMemory;
 	private ActivityManager activityManager;
 	private static List<RunningAppProcessInfo> runningAppProcesses = null;
-	private static final String WHITE_LIST_FILE_NAME = "whitelist";
+	private static final String WHITE_LIST_FILE_NAME = "whiteList";
 	private static final String TAG = "yacleanerlog";
 	private static MemoryInfo mi = new MemoryInfo();
 	public List<String> whiteList = new ArrayList<String>();
@@ -101,10 +101,8 @@ public class YAMemoryInfo {
 	}
 
 	public int refreshProcessInfo() {
-		// ApplicationInfo ai
 		ApplicationInfo ai;
 
-		// PackageManager pm
 		PackageManager pm = context.getPackageManager();
 
 		// memory usage
@@ -264,7 +262,6 @@ public class YAMemoryInfo {
 		ActivityManager activityManager = (ActivityManager) context
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		HashMap<String, Object> processitem;
-		YAProcessInfo yaProcessInfo;
 		String packageName;
 		for (Iterator<HashMap<String, Object>> iterator = processInfoList
 				.iterator(); iterator.hasNext();) {
@@ -275,11 +272,7 @@ public class YAMemoryInfo {
 				Log.d(TAG, packageName+":except");
 				continue;
 			}
-			yaProcessInfo = yaProcessInfoList.get(packageName);
 			activityManager.killBackgroundProcesses(packageName);
-//			for (String processName : yaProcessInfo.processNameList) {
-//				activityManager.killBackgroundProcesses(processName);
-//			}
 		}
 	}
 	

@@ -34,12 +34,11 @@ import android.content.Context;
 public class ProcessList extends ListFragment implements OnItemClickListener {
 	public static final String TAG = "yacleanerlog";
 
-	//private static List<RunningAppProcessInfo> procList = null;
+	// private static List<RunningAppProcessInfo> procList = null;
 	YAMemoryInfo yaMemoryInfo;
 	static final int REFRESH_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
 	ProcessListAdapter simpleAdapter;
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,33 +50,33 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		yaMemoryInfo = new YAMemoryInfo(getActivity());
-		//this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		// this.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		this.getListView().setOnItemClickListener(this);
 		ListView listView = this.getListView();
-		SwipeDismissListViewTouchListener touchListener =
-		new SwipeDismissListViewTouchListener(
-				                  listView,
-				                  new SwipeDismissListViewTouchListener.OnDismissCallback() {
-				                      public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-				                          for (int position : reverseSortedPositions) {
-				                        	  yaMemoryInfo.killProcess(position);
-				                          }
-				                          simpleAdapter.notifyDataSetChanged();
-				                      }
-				                  });
+		SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
+				listView,
+				new SwipeDismissListViewTouchListener.OnDismissCallback() {
+					public void onDismiss(ListView listView,
+							int[] reverseSortedPositions) {
+						for (int position : reverseSortedPositions) {
+							yaMemoryInfo.killProcess(position);
+						}
+						simpleAdapter.notifyDataSetChanged();
+					}
+				});
 		listView.setOnTouchListener(touchListener);
 		listView.setOnScrollListener(touchListener.makeScrollListener());
-		
-		
-		
-		
+
 		registerForContextMenu(getListView());
 		showProcessInfo();
 	}
 
 	/*
 	 * Change context menu title at run time
-	 * @see android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 * 
+	 * @see
+	 * android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu
+	 * , android.view.View, android.view.ContextMenu.ContextMenuInfo)
 	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -87,38 +86,43 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		inflater.inflate(R.menu.processlist_contextmenu, menu);
 		MenuItem menuItem = menu.getItem(0);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		HashMap<String, Object> processInfo= yaMemoryInfo.processInfoList.get(info.position);
-		if(processInfo.get("whitelist")=="0"){
-			menuItem.setTitle(getResources().getString(R.string.process_addto_whitelist));
+		HashMap<String, Object> processInfo = yaMemoryInfo.processInfoList
+				.get(info.position);
+		if (processInfo.get("whitelist") == "0") {
+			menuItem.setTitle(getResources().getString(
+					R.string.process_addto_whitelist));
+		} else {
+			menuItem.setTitle(getResources().getString(
+					R.string.process_removefrom_whitelist));
 		}
-		else{
-			menuItem.setTitle(getResources().getString(R.string.process_removefrom_whitelist));
-		}
-		//Log.d(TAG, "on create context menu");
+		// Log.d(TAG, "on create context menu");
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if(id==R.id.process_addto_whitelist){
+		if (id == R.id.process_addto_whitelist) {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 					.getMenuInfo();
-			HashMap<String,Object> processInfo= yaMemoryInfo.processInfoList.get(info.position);
-			if(processInfo.get("whitelist")=="0"){
+			HashMap<String, Object> processInfo = yaMemoryInfo.processInfoList
+					.get(info.position);
+			if (processInfo.get("whitelist") == "0") {
 				processInfo.put("whitelist", "1");
-				yaMemoryInfo.addToWhiteList((String)processInfo.get("package_name"));
-				Log.d(TAG, processInfo.get("package_name")+"added");
-			}
-			else{
+				yaMemoryInfo.addToWhiteList((String) processInfo
+						.get("package_name"));
+				Log.d(TAG, processInfo.get("package_name") + "added");
+			} else {
 				processInfo.put("whitelist", "0");
-				yaMemoryInfo.removeFromWhiteList((String)processInfo.get("package_name"));
-				Log.d(TAG, processInfo.get("package_name")+"removed");
+				yaMemoryInfo.removeFromWhiteList((String) processInfo
+						.get("package_name"));
+				Log.d(TAG, processInfo.get("package_name") + "removed");
 			}
 		}
 		simpleAdapter.notifyDataSetChanged();
 		return super.onContextItemSelected(item);
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		MenuItem populateItem = menu.add(Menu.NONE, REFRESH_ID, 0, "Refresh");
@@ -137,7 +141,8 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				yaMemoryInfo.killProcesses(YAMemoryInfo.KILL_PROCESSES_EXCEPT_WHITELIST);
+				yaMemoryInfo
+						.killProcesses(YAMemoryInfo.KILL_PROCESSES_EXCEPT_WHITELIST);
 				showProcessInfo();
 			}
 		});
@@ -154,29 +159,11 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 	@Override
-	public void onPause(){
+	public void onPause() {
 		super.onPause();
 	}
-	
-	
-	
-//	public void killAllProcesses() {
-//		Context context = getActivity();
-//		ActivityManager activityManager = (ActivityManager) context
-//				.getSystemService(Context.ACTIVITY_SERVICE);
-//		HashMap<String, Object> processitem;
-//		YAProcessInfo yaProcessInfo;
-//		for (Iterator<HashMap<String, Object>> iterator = yaMemoryInfo.processInfoList
-//				.iterator(); iterator.hasNext();) {
-//			processitem = iterator.next();
-//			yaProcessInfo = yaMemoryInfo.yaProcessInfoList.get(processitem
-//					.get("package_name"));
-//			for(String processName:yaProcessInfo.processNameList){
-//				activityManager.killBackgroundProcesses(processName);
-//			}
-//		}
-//	}
 
 	public void showProcessInfo() {
 		// initial and refresh memoryinfo
@@ -200,23 +187,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
 		arg1.showContextMenu();
-		
-		/*
-		Log.d("yacleanerdebug", position + "");
-		//arg1.setSelected(true);
-		HashMap<String,Object> processInfo = yaMemoryInfo.processInfoList.get(position);
-		if(processInfo.get("whitelist")=="0"){
-			processInfo.put("whitelist", "1");
-			yaMemoryInfo.addToWhiteList((String)processInfo.get("package_name"));
-			Log.d(TAG, processInfo.get("package_name")+"added");
-		}
-		else{
-			processInfo.put("whitelist", "0");
-			yaMemoryInfo.removeFromWhiteList((String)processInfo.get("package_name"));
-			Log.d(TAG, processInfo.get("package_name")+"removed");
-		}
-		simpleAdapter.notifyDataSetChanged();
-		*/
 	}
 
 }
