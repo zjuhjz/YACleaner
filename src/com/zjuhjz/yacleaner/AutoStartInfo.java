@@ -59,6 +59,7 @@ public class AutoStartInfo {
 		includeSystem = false;
 		packageManager = context.getPackageManager();
 		historyList = new HashMap<String, String>();
+		loadHistory();
 		refresh();
 	}
 
@@ -80,10 +81,19 @@ public class AutoStartInfo {
 			String data = new String(fileContent);
 			String[] dataList = data.split("\n");
 			String[] dataItem;
+			
 			for (String i : dataList) {
 				dataItem = i.split(" ");
-				historyList.put(dataItem[0], dataItem[1]);
+				if(dataItem.length==2){
+					historyList.put(dataItem[0], dataItem[1]);
+					Log.d(TAG, dataItem[0]+" "+dataItem[1]);
+				}
+			
 			}
+//			Log.d(TAG, data);
+//			for(Map.Entry<String, String> i : historyList.entrySet()){
+//				Log.d(TAG, i.getKey()+" "+i.getValue());
+//			}
 			fileInputStream.close();
 		} catch (FileNotFoundException e) {
 			try {
@@ -91,7 +101,6 @@ public class AutoStartInfo {
 						HISTORY_FILE_NAME, 0);
 				fileOutputStream.close();
 				Log.d(TAG, "file created");
-
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				// e1.printStackTrace();
@@ -102,6 +111,7 @@ public class AutoStartInfo {
 		} catch (IOException e) {
 			// e.printStackTrace();
 		}
+		
 		return true;
 	}
 
@@ -114,7 +124,6 @@ public class AutoStartInfo {
 			FileOutputStream fileOutputStream = context.openFileOutput(
 					HISTORY_FILE_NAME, Context.MODE_PRIVATE);
 			fileOutputStream.write(fileContent.toString().getBytes());
-
 		} catch (FileNotFoundException e) {
 			return false;
 		} catch (IOException e) {
