@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.zjuhjz.yacleaner.db.ComponentInfo;
-import com.zjuhjz.yacleaner.db.IntentFilterInfo;
-import com.zjuhjz.yacleaner.db.PackageInfo;
+import com.zjuhjz.yapm.db.ComponentInfo;
+import com.zjuhjz.yapm.db.IntentFilterInfo;
+import com.zjuhjz.yapm.db.PackageInfo;
 
 import android.content.ComponentName;
 import android.content.Context;

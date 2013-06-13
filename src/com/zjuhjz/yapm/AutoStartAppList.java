@@ -1,11 +1,12 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zjuhjz.yacleaner.adapter.AutoStartAppListAdapter;
-import com.zjuhjz.yacleaner.tool.Constants;
+import com.zjuhjz.yapm.R;
+import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
+import com.zjuhjz.yapm.tool.Constants;
 
 import android.Manifest.permission;
 import android.content.ComponentName;

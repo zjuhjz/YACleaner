@@ -1,9 +1,11 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
-import com.zjuhjz.yacleaner.ProcessList;
+
+import com.zjuhjz.yapm.ProcessList;
+import com.zjuhjz.yapm.R;
 
 
 public class MainActivity extends FragmentActivity  {

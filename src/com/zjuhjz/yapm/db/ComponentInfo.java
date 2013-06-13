@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner.db;
+package com.zjuhjz.yapm.db;
 
 import android.content.pm.PackageManager;
 import android.os.Parcel;

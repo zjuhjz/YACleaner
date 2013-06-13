@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import android.graphics.Rect;
 import android.util.Log;

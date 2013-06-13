@@ -1,7 +1,9 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.util.HashMap;
 import java.util.List;
+
+import com.zjuhjz.yapm.R;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

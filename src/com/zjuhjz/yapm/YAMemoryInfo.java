@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,8 +21,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.zjuhjz.yacleaner.tool.*;
-import com.zjuhjz.yacleaner.db.YAProcessInfo;
+import com.zjuhjz.yapm.db.YAProcessInfo;
+import com.zjuhjz.yapm.tool.*;
 
 public class YAMemoryInfo {
 	final public static int KILL_PROCESSES_ALL = 1;

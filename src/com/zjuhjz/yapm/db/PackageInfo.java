@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner.db;
+package com.zjuhjz.yapm.db;
 
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;

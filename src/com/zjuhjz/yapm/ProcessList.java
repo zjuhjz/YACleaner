@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 //import com.example.android.supportv4.R;
 
@@ -24,8 +24,9 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.app.ActivityManager;
 
-import com.zjuhjz.yacleaner.adapter.ProcessListAdapter;
-import com.zjuhjz.yacleaner.db.YAProcessInfo;
+import com.zjuhjz.yapm.R;
+import com.zjuhjz.yapm.adapter.ProcessListAdapter;
+import com.zjuhjz.yapm.db.YAProcessInfo;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -178,7 +179,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		setListAdapter(simpleAdapter);
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
-		textview.setText("Total Process Num: "
+		textview.setText("Process Num: "
 				+ Integer.toString(yaMemoryInfo.processInfoList.size())
 				+ "\nfree RAM:" + yaMemoryInfo.availableMemory + " MB");
 	}

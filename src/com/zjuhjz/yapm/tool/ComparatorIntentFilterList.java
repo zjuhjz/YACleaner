@@ -1,8 +1,8 @@
-package com.zjuhjz.yacleaner.tool;
+package com.zjuhjz.yapm.tool;
 
 import java.util.Comparator;
 
-import com.zjuhjz.yacleaner.db.IntentFilterInfo;
+import com.zjuhjz.yapm.db.IntentFilterInfo;
 
 public class ComparatorIntentFilterList implements  Comparator<IntentFilterInfo>{
 

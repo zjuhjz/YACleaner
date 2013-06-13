@@ -1,4 +1,4 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,8 +23,8 @@ import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.zjuhjz.yacleaner.db.IntentFilterInfo;
-import com.zjuhjz.yacleaner.tool.Constants;
+import com.zjuhjz.yapm.db.IntentFilterInfo;
+import com.zjuhjz.yapm.tool.Constants;
 
 //TODO optimize AutoStartInfo data structure.change 
 //     <HashMap<String, Object>intentsAppInfoList to class object
@@ -88,7 +88,6 @@ public class AutoStartInfo {
 					historyList.put(dataItem[0], dataItem[1]);
 					Log.d(TAG, dataItem[0]+" "+dataItem[1]);
 				}
-			
 			}
 //			Log.d(TAG, data);
 //			for(Map.Entry<String, String> i : historyList.entrySet()){

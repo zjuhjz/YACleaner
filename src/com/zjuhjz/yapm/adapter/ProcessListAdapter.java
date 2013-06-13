@@ -1,8 +1,8 @@
-package com.zjuhjz.yacleaner.adapter;
+package com.zjuhjz.yapm.adapter;
 
 import java.util.HashMap;
 import java.util.List;
-import com.zjuhjz.yacleaner.R;
+import com.zjuhjz.yapm.R;
 
 import android.content.Context;
 import android.graphics.Color;

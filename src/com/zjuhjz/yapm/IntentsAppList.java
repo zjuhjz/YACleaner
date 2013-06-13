@@ -1,9 +1,11 @@
-package com.zjuhjz.yacleaner;
+package com.zjuhjz.yapm;
 
 import java.util.HashMap;
 import java.util.List;
 
-import com.zjuhjz.yacleaner.adapter.IntentAppListAdapter;
+import com.zjuhjz.yapm.R;
+import com.zjuhjz.yapm.adapter.IntentAppListAdapter;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
