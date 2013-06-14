@@ -1,24 +1,12 @@
 package com.zjuhjz.yapm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
-import com.zjuhjz.yapm.tool.Constants;
-
-import android.Manifest.permission;
-import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -30,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Toast;
 
 public class AutoStartAppList extends ListFragment implements
 		OnItemClickListener {

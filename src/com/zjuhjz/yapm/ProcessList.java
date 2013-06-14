@@ -2,7 +2,9 @@ package com.zjuhjz.yapm;
 
 //import com.example.android.supportv4.R;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -31,6 +33,7 @@ import com.zjuhjz.yapm.db.YAProcessInfo;
 import java.util.HashMap;
 import java.util.Iterator;
 import android.content.Context;
+import android.content.Intent;
 
 public class ProcessList extends ListFragment implements OnItemClickListener {
 	public static final String TAG = "yacleanerlog";
@@ -187,7 +190,13 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		arg1.showContextMenu();
+		//arg1.showContextMenu();
+		Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS); 
+		String packageName = (String)yaMemoryInfo.processInfoList.get(position).get("package_name");
+		Log.d(TAG,"package Name:"+packageName);
+		Uri uri = Uri.fromParts("package", packageName, null);  
+		intent.setData(uri);  
+		startActivity(intent); 
 	}
 
 }

@@ -16,8 +16,7 @@ public class MainActivity extends FragmentActivity  {
 		setContentView(R.layout.activity_main);
 		mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
-		mTabHost.addTab(mTabHost.newTabSpec("simple").setIndicator("Process Management"),ProcessList.class, null);
-		mTabHost.addTab(mTabHost.newTabSpec("stat").setIndicator("Autostart Management"),AutoStartAppList.class, null);
+		mTabHost.addTab(mTabHost.newTabSpec("simple").setIndicator("Processes"),ProcessList.class, null);
+		mTabHost.addTab(mTabHost.newTabSpec("stat").setIndicator("Autostarts"),AutoStartAppList.class, null);
 	}
-
 }
