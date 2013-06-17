@@ -18,10 +18,13 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.app.Activity;
 
 import com.zjuhjz.yapm.db.IntentFilterInfo;
 import com.zjuhjz.yapm.tool.Constants;
@@ -52,6 +55,7 @@ public class AutoStartInfo {
 	final private static String HISTORY_FILE_NAME = "blockHistory";
 	HashMap<String, String> historyList;
 
+	
 	AutoStartInfo(Context context) {
 		this.context = context;
 		intentsInfoList = new ArrayList<HashMap<String, Object>>();
@@ -64,8 +68,10 @@ public class AutoStartInfo {
 	}
 
 	private void loadReceiverReader() {
-		ReceiverReader receiverReader = new ReceiverReader(context, null);
-		info = receiverReader.load();
+		//ReceiverReader receiverReader = new ReceiverReader(context, null);
+		AutostartInfoLoadTask autostartInfoLoadTask= new AutostartInfoLoadTask();
+		autostartInfoLoadTask.execute();
+		//info = receiverReader.load();
 	}
 
 	public boolean loadHistory() {
@@ -202,7 +208,7 @@ public class AutoStartInfo {
 	public void refresh() {
 		// load();
 		loadReceiverReader();
-		refreshListDataSource();
+		//refreshListDataSource();
 	}
 
 	public void changeIncludeSystemFlag() {
@@ -434,4 +440,41 @@ public class AutoStartInfo {
 			e.printStackTrace();
 		}
 	}
+	
+	public class AutostartInfoLoadTask extends AsyncTask<Void, Integer, ArrayList<IntentFilterInfo>>{
+		TextView textView;
+		protected void onPreExecute(){
+			textView = (TextView)((Activity)context).findViewById(R.id.loading);
+		}
+		@Override
+		protected ArrayList<IntentFilterInfo> doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			if(textView==null){
+				Log.d(TAG, "nullnull");
+				textView = (TextView)((Activity)context).findViewById(R.id.loading);
+			}
+			ReceiverReader receiverReader = new ReceiverReader(context, new ReceiverReader.OnLoadProgressListener(){
+				@Override
+				public void onProgress(
+					ArrayList<IntentFilterInfo> currentState, float progress) {
+					// TODO Auto-generated method stub
+					publishProgress((int)(progress*100));
+				}
+			});
+			info = receiverReader.load();
+			return info;
+			
+		}
+		protected void onPostExecute(){
+			refreshListDataSource();
+		}
+		
+		protected void onProgressUpdate(Integer... progress) {
+			
+			textView.setText(String.valueOf(progress[0]));
+		}
+		
+
+	}
+
 }

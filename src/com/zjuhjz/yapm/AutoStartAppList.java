@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ public class AutoStartAppList extends ListFragment implements
 	public static final String TAG = "yacleanerlog";
 	AutoStartInfo autoStartInfo;
 	static final int INCLUDE_SYSTEM_ID = Menu.FIRST;
-
+	View emptyView;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -36,11 +37,19 @@ public class AutoStartAppList extends ListFragment implements
 		showAppInfo();
 		registerForContextMenu(getListView());
 	}
+	
+	public void onStart() {
+        super.onStart();
+        getListView().setEmptyView(emptyView);
+        // The activity is about to become visible.
+    }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// super.onCreateView(inflater, container, savedInstanceState);
+		emptyView = inflater.inflate(R.layout.activity_autostart_app_list_empty,
+				container, false);
 		View view = inflater.inflate(R.layout.activity_autostart_app_list,
 				container, false);
 		return view;
@@ -80,6 +89,10 @@ public class AutoStartAppList extends ListFragment implements
 
 	private void showAppInfo() {
 		Context context = getActivity();
+		if(autoStartInfo.appInfoList==null){
+			Log.d(TAG, "nullnullnull");
+		}
+		
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
 				autoStartInfo.appInfoList, R.layout.autostart_app_list_item,
 				new String[] { "appName", "historyStatus" }, new int[] {
