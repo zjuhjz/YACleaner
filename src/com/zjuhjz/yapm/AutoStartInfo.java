@@ -5,11 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +20,9 @@ import android.os.AsyncTask;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
@@ -80,7 +81,6 @@ public class AutoStartInfo {
 					.openFileInput(HISTORY_FILE_NAME);
 			byte[] buffer = new byte[1024];
 			StringBuffer fileContent = new StringBuffer("");
-			Log.d(TAG, "file opened");
 			while (fileInputStream.read(buffer) != -1) {
 				fileContent.append(new String(buffer));
 			}
@@ -92,20 +92,14 @@ public class AutoStartInfo {
 				dataItem = i.split(" ");
 				if(dataItem.length==2){
 					historyList.put(dataItem[0], dataItem[1]);
-					Log.d(TAG, dataItem[0]+" "+dataItem[1]);
 				}
 			}
-//			Log.d(TAG, data);
-//			for(Map.Entry<String, String> i : historyList.entrySet()){
-//				Log.d(TAG, i.getKey()+" "+i.getValue());
-//			}
 			fileInputStream.close();
 		} catch (FileNotFoundException e) {
 			try {
 				FileOutputStream fileOutputStream = context.openFileOutput(
 						HISTORY_FILE_NAME, 0);
 				fileOutputStream.close();
-				Log.d(TAG, "file created");
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				// e1.printStackTrace();
@@ -179,6 +173,7 @@ public class AutoStartInfo {
 				historyList.put(intentFilterInfo.componentInfo.packageInfo.packageName, historyStatus);
 				appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
 				appItem.put("intentInfoList", appIntentsInfoList);
+				//Log.d(TAG, "test:"+appName);
 			}
 			appIntentsInfo = new HashMap<String, Object>();
 			appIntentsInfo.put("component_name",
@@ -442,17 +437,21 @@ public class AutoStartInfo {
 	}
 	
 	public class AutostartInfoLoadTask extends AsyncTask<Void, Integer, ArrayList<IntentFilterInfo>>{
-		TextView textView;
+		//TextView textView;
+		LinearLayout linearLayout;
+		ProgressBar progressBar;
 		protected void onPreExecute(){
-			textView = (TextView)((Activity)context).findViewById(R.id.loading);
+			//textView = (TextView)((Activity)context).findViewById(R.id.loading);
+			progressBar = (ProgressBar)((Activity)context).findViewById(R.id.autostart_loading_progressBar);
+			linearLayout = (LinearLayout) ((Activity)context).findViewById(R.id.loadingProgressLayout);
+			linearLayout.setVisibility(View.VISIBLE);
 		}
 		@Override
 		protected ArrayList<IntentFilterInfo> doInBackground(Void... params) {
 			// TODO Auto-generated method stub
-			if(textView==null){
-				Log.d(TAG, "nullnull");
-				textView = (TextView)((Activity)context).findViewById(R.id.loading);
-			}
+//			if(textView==null){
+//				textView = (TextView)((Activity)context).findViewById(R.id.loading);
+//			}
 			ReceiverReader receiverReader = new ReceiverReader(context, new ReceiverReader.OnLoadProgressListener(){
 				@Override
 				public void onProgress(
@@ -462,16 +461,19 @@ public class AutoStartInfo {
 				}
 			});
 			info = receiverReader.load();
+
 			return info;
 			
 		}
-		protected void onPostExecute(){
+		protected void onPostExecute(ArrayList<IntentFilterInfo> i){
+			Log.d(TAG, "info length:"+info.size());
 			refreshListDataSource();
+			linearLayout.setVisibility(View.GONE);
 		}
 		
 		protected void onProgressUpdate(Integer... progress) {
-			
-			textView.setText(String.valueOf(progress[0]));
+			progressBar.setProgress(progress[0]);
+			//textView.setText(String.valueOf(progress[0]));
 		}
 		
 

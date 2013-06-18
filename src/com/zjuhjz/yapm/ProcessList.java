@@ -115,12 +115,10 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 				processInfo.put("whitelist", "1");
 				yaMemoryInfo.addToWhiteList((String) processInfo
 						.get("package_name"));
-				Log.d(TAG, processInfo.get("package_name") + "added");
 			} else {
 				processInfo.put("whitelist", "0");
 				yaMemoryInfo.removeFromWhiteList((String) processInfo
 						.get("package_name"));
-				Log.d(TAG, processInfo.get("package_name") + "removed");
 			}
 		}
 		simpleAdapter.notifyDataSetChanged();
@@ -193,7 +191,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		//arg1.showContextMenu();
 		Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS); 
 		String packageName = (String)yaMemoryInfo.processInfoList.get(position).get("package_name");
-		Log.d(TAG,"package Name:"+packageName);
 		Uri uri = Uri.fromParts("package", packageName, null);  
 		intent.setData(uri);  
 		startActivity(intent); 

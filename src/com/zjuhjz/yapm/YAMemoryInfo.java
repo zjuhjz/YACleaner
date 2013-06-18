@@ -73,7 +73,6 @@ public class YAMemoryInfo {
 					.openFileInput(WHITE_LIST_FILE_NAME);
 			byte[] buffer = new byte[1024];
 			StringBuffer fileContent = new StringBuffer("");
-			Log.d(TAG, "file opened");
 			while (fileInputStream.read(buffer) != -1) {
 				fileContent.append(new String(buffer));
 			}
@@ -85,7 +84,6 @@ public class YAMemoryInfo {
 				FileOutputStream fileOutputStream = context.openFileOutput(
 						WHITE_LIST_FILE_NAME, 0);
 				fileOutputStream.close();
-				Log.d(TAG, "file created");
 
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
@@ -229,7 +227,6 @@ public class YAMemoryInfo {
 	public boolean removeFromWhiteList(String packageName) {
 		if (whiteList.contains(packageName)) {
 			whiteList.remove(packageName);
-			Log.d(TAG, "remove " + packageName);
 			saveWhiteList();
 		}
 		return true;
@@ -269,7 +266,6 @@ public class YAMemoryInfo {
 			packageName = (String) processitem.get("package_name");
 			//Log.d(TAG, packageName);
 			if (whiteList.contains(packageName)&&option==YAMemoryInfo.KILL_PROCESSES_EXCEPT_WHITELIST) {
-				Log.d(TAG, packageName+":except");
 				continue;
 			}
 			activityManager.killBackgroundProcesses(packageName);
