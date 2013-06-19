@@ -118,6 +118,7 @@ public class AutoStartInfo {
 		StringBuffer fileContent = new StringBuffer("");
 		for (Map.Entry<String, String> entry : historyList.entrySet()) {
 			fileContent.append(entry.getKey() + " " + entry.getValue() + "\n");
+            Log.d(TAG,entry.getKey()+":"+entry.getValue());
 		}
 		try {
 			FileOutputStream fileOutputStream = context.openFileOutput(

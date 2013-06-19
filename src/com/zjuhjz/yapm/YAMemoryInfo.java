@@ -207,6 +207,7 @@ public class YAMemoryInfo {
 			// map.put("pid", yaProcessInfo.pid + "");
 			map.put("memory_usage", yaProcessInfo.totalMemoryUsage + "MB");
 			map.put("whitelist", yaProcessInfo.isWhiteList ? "1" : "0");
+            map.put("whitelist_label",yaProcessInfo.isWhiteList ? "white list" : "");
 			// TODO add a filter
 			map.put("is_system_app", yaProcessInfo.isSystemApp ? "1" : "0");
 			map.put("icon", yaProcessInfo.icon);
@@ -216,6 +217,9 @@ public class YAMemoryInfo {
 		return runningAppProcesses.size();
 	}
 
+    public void refreshDisplayInfo(){
+
+    }
 	public boolean addToWhiteList(String packageName) {
 		if (!whiteList.contains(packageName)) {
 			whiteList.add(packageName);

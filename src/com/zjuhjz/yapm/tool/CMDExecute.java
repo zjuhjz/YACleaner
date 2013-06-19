@@ -11,7 +11,6 @@ public class CMDExecute {
         try {
             ProcessBuilder builder = new ProcessBuilder(cmd);
             InputStream in = null;
-            //设置一个路径
             if (workdirectory != null) {
                 builder.directory(new File(workdirectory));
                 builder.redirectErrorStream(true);

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
-
+import android.widget.TextView;
 
 
 public class ProcessListAdapter extends SimpleAdapter {
@@ -30,10 +30,11 @@ public class ProcessListAdapter extends SimpleAdapter {
 		View view = super.getView(position, convertView, parent);
 		ImageView imageView = (ImageView)view.findViewById(R.id.process_list_app_icon);
 		view.setBackgroundColor(Color.parseColor("#FFFFFF"));
-		processInfo = (HashMap<String, Object> )data.get(position);
+		processInfo = data.get(position);
 		imageView.setImageDrawable((Drawable)processInfo.get("icon"));
 		if (processInfo.get("whitelist")=="1"){
-			view.setBackgroundColor(Color.parseColor("#00FFFF"));
+			view.setBackgroundColor(Color.parseColor("#F0F0F0"));
+            ((TextView)view.findViewById(R.id.whitelist_label)).setText("white list");
 		}
 		return view;
 	}

@@ -99,7 +99,6 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 			menuItem.setTitle(getResources().getString(
 					R.string.process_removefrom_whitelist));
 		}
-		// Log.d(TAG, "on create context menu");
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
@@ -121,6 +120,14 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 						.get("package_name"));
 			}
 		}
+        else if (id == R.id.process_detail){
+            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            String packageName = (String)yaMemoryInfo.processInfoList.get(info.position).get("package_name");
+            Uri uri = Uri.fromParts("package", packageName, null);
+            intent.setData(uri);
+            startActivity(intent);
+        }
 		simpleAdapter.notifyDataSetChanged();
 		return super.onContextItemSelected(item);
 	}
@@ -175,8 +182,8 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		// TODO improve "string from"
 		simpleAdapter = new ProcessListAdapter(context,
 				yaMemoryInfo.processInfoList, R.layout.process_list_item,
-				new String[] { "app_name", "memory_usage" }, new int[] {
-						R.id.process_name, R.id.process_memory });
+				new String[] { "app_name", "memory_usage","whitelist_label" }, new int[] {
+						R.id.process_name, R.id.process_memory,R.id.whitelist_label });
 		setListAdapter(simpleAdapter);
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
@@ -188,12 +195,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		//arg1.showContextMenu();
-		Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS); 
-		String packageName = (String)yaMemoryInfo.processInfoList.get(position).get("package_name");
-		Uri uri = Uri.fromParts("package", packageName, null);  
-		intent.setData(uri);  
-		startActivity(intent); 
+		arg1.showContextMenu();
 	}
 
 }
