@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">  
     <item android:id="@+id/block_gentle" android:title="@string/menu_set_autostart_1" />  
     <item android:id="@+id/block_strong" android:title="@string/menu_set_autostart_2" />  
-    <item android:id="@+id/block_complete" android:title="@string/menu_set_autostart_3" />  
+    <item android:id="@+id/block_complete" android:title="@string/menu_set_autostart_3" />
+    <item android:id="@+id/block_manually" android:title="@string/menu_set_block_manually"></item>
     <item android:id="@+id/unblock" android:title="@string/menu_set_autostart_4" />  
 </menu>  

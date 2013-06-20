@@ -10,7 +10,7 @@
     <string name="menu_set_autostart_2">Block strongly</string>
     <string name="menu_set_autostart_3">Block completely</string>
     <string name="menu_set_autostart_4">Unblock All</string>
-    <string name="menu_set_autostart_5">Block Yourself</string>
+    <string name="menu_set_block_manually">Block Manually</string>
 	<string name="process_addto_whitelist">Add to white list</string>
 	<string name="process_removefrom_whitelist">Remove from white list</string>
 	<string name="loading">Loading autostart info...</string>

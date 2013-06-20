@@ -3,7 +3,10 @@ package com.zjuhjz.yapm;
 import java.util.HashMap;
 import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
@@ -118,7 +121,13 @@ public class AutoStartAppList extends ListFragment implements
 			autoStartInfo.blockCompelete(mAppitem);
 		} else if (id == R.id.unblock) {
 			autoStartInfo.unBlockAll(mAppitem);
-		}
+		} else if (id == R.id.block_manually){
+            HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)mAppitem.get("componentList");
+            Intent intent = new Intent(getActivity(),ReceiverList.class);
+            intent.putExtra("ComponentList",mComponentList);
+            startActivity(intent);
+            //new AlertDialog.Builder(this.getActivity()).setTitle("set").setMultiChoiceItems().show();
+        }
 		autoStartAppListAdapter.notifyDataSetChanged();
 		return super.onContextItemSelected(item);
 	}
