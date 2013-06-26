@@ -1,16 +1,157 @@
 package com.zjuhjz.yapm;
 
+import android.Manifest;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.provider.Settings;
+import android.util.Log;
+
 import java.util.HashMap;
 
-import android.os.AsyncTask;
+public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer, String> {
 
-public class ToggleAsyncTask extends AsyncTask<HashMap<String,Object>, Integer , String>{
+    private Context context = null;
+    public String TAG = ProcessList.TAG;
 
-	@Override
-	protected String doInBackground(HashMap<String,Object> ... params) {
-		// TODO Auto-generated method stub
-		
-		return null;
-	}
-	
+    @Override
+    protected String doInBackground(HashMap<String, Object>... params) {
+        // TODO Auto-generated method stub
+
+        return null;
+    }
+
+    public ToggleAsyncTask(Context context) {
+        this.context = context;
+    }
+
+    private boolean setADBEnabledState(ContentResolver cr, boolean enable) {
+        if (context.checkCallingOrSelfPermission(
+                Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "Using secure settings API to touch ADB setting");
+            return Settings.Secure.putInt(cr, Settings.Secure.ADB_ENABLED,
+                    enable ? 1 : 0);
+        } else {
+            Log.i(TAG, "Using setprop call to touch ADB setting");
+            return Utils.runRootCommand(String.format(
+                    "setprop persist.service.adb.enable %s", enable ? 1 : 0),
+                    null, null);
+        }
+    }
+
+    public static void sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean setComponentEnable(boolean enable[], String componentName[],
+                                       String packageName[]) {
+        ContentResolver cr = context.getContentResolver();
+        boolean adbNeedsRedisable = false;
+        boolean adbEnabled;
+        int length;
+        if (enable.length != componentName.length || componentName.length != packageName.length) {
+            return false;
+        }
+        length = enable.length;
+        for (int i = 0; i < length; ++i) {
+            if (componentName[i] == null || componentName[i].isEmpty()
+                    || packageName[i] == null || packageName[i].isEmpty()) {
+                return false;
+            }
+        }
+
+        try {
+            adbEnabled = (Settings.Secure.getInt(cr,
+                    Settings.Secure.ADB_ENABLED) == 1);
+        } catch (Settings.SettingNotFoundException e) {
+            // This started to happen at times on the ICS emulator
+            // (and possibly one user reported it).
+            Log.w(TAG, "Failed to read adb_enabled setting, assuming no", e);
+            adbEnabled = false;
+        }
+
+        // If adb is disabled, try to enable it, temporarily. This will
+        // make our root call go through without hanging.
+        // TODO: It seems this might no longer be required under ICS.
+        if (!adbEnabled) {
+            Log.i(TAG, "Switching ADB on for the root call");
+            if (setADBEnabledState(cr, true)) {
+                adbEnabled = true;
+                adbNeedsRedisable = true;
+                // Let's be extra sure we don't run into any timing-related
+                // hiccups.
+                sleep(1000);
+            }
+        }
+
+        try {
+            // Run the command; we have different invocations we can try, but
+            // we'll stop at the first one we succeed with.
+            //
+            // On ICS, it became necessary to set a library path (which is
+            // cleared for suid programs, for obvious reasons). It can't hurt
+            // on older versions. See also
+            // https://github.com/ChainsDD/su-binary/issues/6
+            final String libs = "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/system/lib\" ";
+            boolean success = false;
+            for (String[] set : new String[][]{
+                    {libs + "pm %s '%s/%s'", null},
+                    {libs + "sh /system/bin/pm %s '%s/%s'", null},
+                    {
+                            libs
+                                    + "app_process /system/bin com.android.commands.pm.Pm %s '%s/%s'",
+                            "CLASSPATH=/system/framework/pm.jar"},
+                    {
+                            libs
+                                    + "/system/bin/app_process /system/bin com.android.commands.pm.Pm %s '%s/%s'",
+                            "CLASSPATH=/system/framework/pm.jar"},}) {
+                for (int i =0; i<length&&((i==0)^success); ++i){
+                    if (Utils.runRootCommand(String.format(set[0],
+                            (enable[i] ? "enable" : "disable"), packageName[i],
+                            componentName[i]),
+                            (set[1] != null) ? new String[]{set[1]} : null,
+                            // The timeout shouldn't really be needed ever, since
+                            // we now automatically enable ADB, which should work
+                            // around any freezing issue. However, in rare, hard
+                            // to reproduce cases, it still occurs, and in those
+                            // cases the timeout will improve the user experience.
+                            25000)) {
+                        success = true;
+                        break;
+                    }
+                }
+            }
+
+            // We are happy if both the command itself succeed (return code)...
+            if (!success)
+                return false;
+
+            //context.getPackageManager();
+            //new ComponentName(packageName, componentName);
+
+            // success = mComponent.isCurrentlyEnabled() == mDoEnable;
+            // if (success)
+            Log.i(TAG, "State successfully changed");
+            // else
+            // Log.i(ListActivity.TAG, "State change failed");
+            // return success;
+            return true;
+        } finally {
+            if (adbNeedsRedisable) {
+                Log.i(TAG, "Switching ADB off again");
+                setADBEnabledState(cr, false);
+                // Delay releasing the GUI for a while, there seems to
+                // be a mysterious problem of repeating this process multiple
+                // times causing it to somehow lock up, no longer work.
+                // I'm hoping this might help.
+                sleep(5000);
+            }
+        }
+    }
 }

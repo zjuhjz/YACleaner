@@ -2,38 +2,31 @@ package com.zjuhjz.yapm;
 
 //import com.example.android.supportv4.R;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.MenuItemCompat;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import android.widget.TextView;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.MenuItemCompat;
-import android.app.ActivityManager;
 
-import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.ProcessListAdapter;
-import com.zjuhjz.yapm.db.YAProcessInfo;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import android.content.Context;
-import android.content.Intent;
 
 public class ProcessList extends ListFragment implements OnItemClickListener {
 	public static final String TAG = "yacleanerlog";

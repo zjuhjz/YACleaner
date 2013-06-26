@@ -3,16 +3,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-    <EditText
+              android:layout_height="wrap_content"
+              android:paddingBottom="5dp"
+              android:paddingLeft="5dp"
+              android:paddingTop="5dp">
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="50dp"
             android:id="@+id/receiver_name"
             android:layout_gravity="left|center_vertical"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/receiver_checkbox"
-            android:singleLine="true"/>
+            android:layout_toLeftOf="@+id/receiver_checkbox"/>
     <CheckBox
             android:layout_width="50dp"
             android:layout_height="50dp"
