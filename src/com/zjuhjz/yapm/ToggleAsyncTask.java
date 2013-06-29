@@ -1,7 +1,6 @@
 package com.zjuhjz.yapm;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,6 +9,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer, String> {
 
@@ -19,6 +19,8 @@ public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer,
     @Override
     protected String doInBackground(HashMap<String, Object>... params) {
         // TODO Auto-generated method stub
+
+
 
         return null;
     }
@@ -49,19 +51,23 @@ public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer,
         }
     }
 
-    private boolean setComponentEnable(boolean enable[], String componentName[],
-                                       String packageName[]) {
+    private boolean setComponentEnable(List<HashMap<String, Object>> info) {
         ContentResolver cr = context.getContentResolver();
+        HashMap<String, Object> item;
+        String componentName;
+        String packageName;
+        boolean enable;
         boolean adbNeedsRedisable = false;
         boolean adbEnabled;
         int length;
-        if (enable.length != componentName.length || componentName.length != packageName.length) {
-            return false;
-        }
-        length = enable.length;
+        length = info.size();
         for (int i = 0; i < length; ++i) {
-            if (componentName[i] == null || componentName[i].isEmpty()
-                    || packageName[i] == null || packageName[i].isEmpty()) {
+            item = info.get(i);
+            componentName = (String)item.get("componentName");
+            packageName = (String)item.get("packageName");
+            enable = (Boolean)item.get("enable");
+            if (componentName == null || componentName.isEmpty()
+                    || packageName == null || packageName.isEmpty()) {
                 return false;
             }
         }
@@ -112,9 +118,13 @@ public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer,
                                     + "/system/bin/app_process /system/bin com.android.commands.pm.Pm %s '%s/%s'",
                             "CLASSPATH=/system/framework/pm.jar"},}) {
                 for (int i =0; i<length&&((i==0)^success); ++i){
+                    item = info.get(i);
+                    componentName = (String)item.get("componentName");
+                    packageName = (String)item.get("packageName");
+                    enable = (Boolean)item.get("enable");
                     if (Utils.runRootCommand(String.format(set[0],
-                            (enable[i] ? "enable" : "disable"), packageName[i],
-                            componentName[i]),
+                            (enable ? "enable" : "disable"), packageName,
+                            componentName),
                             (set[1] != null) ? new String[]{set[1]} : null,
                             // The timeout shouldn't really be needed ever, since
                             // we now automatically enable ADB, which should work

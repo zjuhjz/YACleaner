@@ -22,7 +22,9 @@
             android:layout_width="50dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Yes"/>
+            android:text="Yes"
+            android:onClick="setState"
+                />
         <Button
             android:id="@+id/no"
             android:layout_weight="1"
