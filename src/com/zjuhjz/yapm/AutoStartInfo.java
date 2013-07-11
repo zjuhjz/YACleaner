@@ -121,7 +121,6 @@ public class AutoStartInfo {
         StringBuffer fileContent = new StringBuffer("");
         for (Map.Entry<String, String> entry : historyList.entrySet()) {
             fileContent.append(entry.getKey() + " " + entry.getValue() + "\n");
-            Log.d(TAG, entry.getKey() + ":" + entry.getValue());
         }
         try {
             FileOutputStream fileOutputStream = context.openFileOutput(
@@ -179,7 +178,6 @@ public class AutoStartInfo {
                 appItem.put("intentInfoList", appIntentsInfoList);
                 componentList = new HashMap<String, Boolean>();
                 appItem.put("componentList", componentList);
-                //Log.d(TAG, "test:"+appName);
             }
 
             appIntentsInfo = new HashMap<String, Object>();
@@ -266,7 +264,6 @@ public class AutoStartInfo {
     }
 
     public boolean blockStrong(HashMap<String, Object> list) {
-        @SuppressWarnings("unchecked")
         List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
                 .get("intentInfoList");
         List<String> blockIntentsNameList = new ArrayList<String>();
@@ -476,7 +473,6 @@ public class AutoStartInfo {
         }
 
         protected void onPostExecute(ArrayList<IntentFilterInfo> i) {
-            Log.d(TAG, "info length:" + info.size());
             refreshListDataSource();
             linearLayout.setVisibility(View.GONE);
         }

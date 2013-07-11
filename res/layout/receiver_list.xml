@@ -18,18 +18,19 @@
             android:layout_height="60dp"
             android:orientation="horizontal">
         <Button
-            android:id="@+id/yes"
+            android:id="@+id/receiver_confirm"
             android:layout_width="50dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Yes"
-            android:onClick="setState"
+            android:text="Confirm"
+            android:onClick="confirm"
                 />
         <Button
-            android:id="@+id/no"
+            android:id="@+id/receiver_cancel"
             android:layout_weight="1"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:text="No"/>
+            android:text="Cancel"
+            android:onClick="cancel"/>
     </LinearLayout>
 </LinearLayout>

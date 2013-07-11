@@ -1,6 +1,11 @@
 package com.zjuhjz.yapm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
 
@@ -93,7 +98,6 @@ public class AutoStartAppList extends ListFragment implements
 				autoStartInfo.appInfoList, R.layout.autostart_app_list_item,
 				new String[] { "appName", "historyStatus" }, new int[] {
 						R.id.autostart_app_name, R.id.autostart_status });
-		
 		setListAdapter(autoStartAppListAdapter);
 	}
 
@@ -124,9 +128,34 @@ public class AutoStartAppList extends ListFragment implements
             HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)mAppitem.get("componentList");
             Intent intent = new Intent(getActivity(),ReceiverList.class);
             intent.putExtra("ComponentList",mComponentList);
-            startActivity(intent);
+            intent.putExtra("PackageName",(String)mAppitem.get("package_name"));
+            Log.d(TAG,"packageName:"+mAppitem.get("package_name"));
+            //startActivity(intent);
+            startActivityForResult(intent, 1);
         }
 		autoStartAppListAdapter.notifyDataSetChanged();
-		return super.onContextItemSelected(item);
+        return super.onContextItemSelected(item);
 	}
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)data.getSerializableExtra("ComponentList");
+        String packageName = data.getStringExtra("PackageName");
+        Iterator iterator = mComponentList.entrySet().iterator();
+        HashMap<String,Object> component ;
+        List<HashMap<String,Object>> componentList = new ArrayList<HashMap<String, Object>>();
+        Map.Entry entry;
+
+        for (;iterator.hasNext();){
+            entry = (Map.Entry)iterator.next();
+            component = new HashMap<String, Object>();
+            component.put("packageName",packageName);
+            component.put("componentName",entry.getKey());
+            component.put("enable",entry.getValue());
+            componentList.add(component);
+        }
+        ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
+        toggleAsyncTask.execute(componentList);
+    }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.zjuhjz.yapm.ProcessList;
@@ -42,7 +43,6 @@ public class ReceiverListAdapter extends BaseAdapter{
                 pairs = (Map.Entry)it.next();
                 componentName.add((String)pairs.getKey());
                 componentStatus.add((Boolean)pairs.getValue());
-                Log.d(TAG,(String)pairs.getKey()+"added");
             }
         }
         inflater =LayoutInflater.from(context);
@@ -71,8 +71,28 @@ public class ReceiverListAdapter extends BaseAdapter{
         }
         TextView receiverName = (TextView)mView.findViewById(R.id.receiver_name);
         CheckBox receiverStatus = (CheckBox)mView.findViewById(R.id.receiver_checkbox);
+
         receiverName.setText(componentName.get(i));
         receiverStatus.setChecked(componentStatus.get(i));
+        receiverStatus.setOnCheckedChangeListener(new MyOnCheckedChangeListener(i) {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                componentStatus.set(index,b);
+                componentList.put(componentName.get(index),componentStatus.get(index));
+            }
+        });
         return mView;
+    }
+
+    class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
+        int index;
+        public  MyOnCheckedChangeListener(int index){
+            this.index = index;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+        }
     }
 }

@@ -7,21 +7,19 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer, String> {
+public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, Integer, String> {
 
     private Context context = null;
     public String TAG = ProcessList.TAG;
 
     @Override
-    protected String doInBackground(HashMap<String, Object>... params) {
-        // TODO Auto-generated method stub
-
-
-
+    protected String doInBackground(List<HashMap<String, Object>>... params) {
+        setComponentEnable(params[0]);
         return null;
     }
 
@@ -122,6 +120,8 @@ public class ToggleAsyncTask extends AsyncTask<HashMap<String, Object>, Integer,
                     componentName = (String)item.get("componentName");
                     packageName = (String)item.get("packageName");
                     enable = (Boolean)item.get("enable");
+
+                    //Toast.makeText(context,componentName+(enable?" enabled":" disbaled"),Toast.LENGTH_SHORT).show();
                     if (Utils.runRootCommand(String.format(set[0],
                             (enable ? "enable" : "disable"), packageName,
                             componentName),
