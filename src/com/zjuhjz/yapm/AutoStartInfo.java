@@ -444,7 +444,7 @@ public class AutoStartInfo {
         //TextView textView;
         LinearLayout linearLayout;
         ProgressBar progressBar;
-
+        @Override
         protected void onPreExecute() {
             //textView = (TextView)((Activity)context).findViewById(R.id.loading);
             progressBar = (ProgressBar) ((Activity) context).findViewById(R.id.autostart_loading_progressBar);

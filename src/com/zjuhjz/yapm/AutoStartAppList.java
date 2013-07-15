@@ -33,6 +33,7 @@ public class AutoStartAppList extends ListFragment implements
 	AutoStartAppListAdapter autoStartAppListAdapter;
 	public static final String TAG = "yacleanerlog";
 	AutoStartInfo autoStartInfo;
+    HashMap<String, Object> mAppitem;
 	static final int INCLUDE_SYSTEM_ID = Menu.FIRST;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -112,15 +113,15 @@ public class AutoStartAppList extends ListFragment implements
 		int id = item.getItemId();
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
-		HashMap<String, Object> mAppitem = autoStartInfo.appInfoList
+		mAppitem = autoStartInfo.appInfoList
 				.get(info.position);
-		if (id == R.id.block_gentle) {
+		/*if (id == R.id.block_gentle) {
 			autoStartInfo.blockGentle(mAppitem);
 			// List<HashMap<String,Object>> mIntentsInfoList =
 			// (List<HashMap<String,Object>>)mAppitem.get("intentInfoList");
 		} else if (id == R.id.block_strong) {
 			autoStartInfo.blockStrong(mAppitem);
-		} else if (id == R.id.block_complete) {
+		} else */if (id == R.id.block_complete) {
 			autoStartInfo.blockCompelete(mAppitem);
 		} else if (id == R.id.unblock) {
 			autoStartInfo.unBlockAll(mAppitem);
@@ -130,7 +131,6 @@ public class AutoStartAppList extends ListFragment implements
             intent.putExtra("ComponentList",mComponentList);
             intent.putExtra("PackageName",(String)mAppitem.get("package_name"));
             Log.d(TAG,"packageName:"+mAppitem.get("package_name"));
-            //startActivity(intent);
             startActivityForResult(intent, 1);
         }
 		autoStartAppListAdapter.notifyDataSetChanged();
@@ -140,22 +140,36 @@ public class AutoStartAppList extends ListFragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)data.getSerializableExtra("ComponentList");
-        String packageName = data.getStringExtra("PackageName");
-        Iterator iterator = mComponentList.entrySet().iterator();
-        HashMap<String,Object> component ;
-        List<HashMap<String,Object>> componentList = new ArrayList<HashMap<String, Object>>();
-        Map.Entry entry;
-
-        for (;iterator.hasNext();){
-            entry = (Map.Entry)iterator.next();
-            component = new HashMap<String, Object>();
-            component.put("packageName",packageName);
-            component.put("componentName",entry.getKey());
-            component.put("enable",entry.getValue());
-            componentList.add(component);
+        if (resultCode==0){
+            return;
         }
-        ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
-        toggleAsyncTask.execute(componentList);
+        if (resultCode==1){
+            HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)data.getSerializableExtra("ComponentList");
+            HashMap<String,Boolean> mOriComponentList = (HashMap<String,Boolean>)mAppitem.get("componentList");
+            String packageName = data.getStringExtra("PackageName");
+            Iterator iterator = mComponentList.entrySet().iterator();
+            HashMap<String,Object> component ;
+            List<HashMap<String,Object>> componentList = new ArrayList<HashMap<String, Object>>();
+            Map.Entry entry;
+            List<HashMap<String, Object>> mIntentInfoList = (List<HashMap<String, Object>>)mAppitem.get("intentInfoList");
+            if (mComponentList.size()==mOriComponentList.size()){
+                for (;iterator.hasNext();){
+                    entry = (Map.Entry)iterator.next();
+                    if (entry.getValue()!=mOriComponentList.get(entry.getKey()))
+                    {
+                        component = new HashMap<String, Object>();
+                        component.put("packageName",packageName);
+                        component.put("componentName",entry.getKey());
+                        component.put("enable",entry.getValue());
+                        componentList.add(component);
+                    }
+
+                }
+            }
+            ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
+            toggleAsyncTask.execute(componentList);
+
+
+        }
     }
 }

@@ -30,12 +30,42 @@
 			android:minHeight="40dip"  
 		/>  
 	</LinearLayout>
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
+    <FrameLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ListView
+                android:id="@id/android:list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawSelectorOnTop="false"/>
+        <LinearLayout
+                android:id="@+id/settingProgressLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:layout_above="@id/android:list">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/setting"
+                    />
+            <ProgressBar
+                    android:id="@+id/autostart_setting_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:max="100"
+                    android:minWidth="180dip"
+                    android:minHeight="40dip"
+                    />
+        </LinearLayout>
+
+    </FrameLayout>
        
     
 </LinearLayout>

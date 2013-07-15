@@ -39,6 +39,7 @@ public class ReceiverList extends ListActivity {
     }
 
     public void cancel(View view){
+        setResult(0);
         finish();
     }
 

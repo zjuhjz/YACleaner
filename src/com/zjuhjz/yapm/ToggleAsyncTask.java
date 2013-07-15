@@ -1,14 +1,20 @@
 package com.zjuhjz.yapm;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
+import com.zjuhjz.yapm.db.IntentFilterInfo;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +22,21 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
 
     private Context context = null;
     public String TAG = ProcessList.TAG;
+    LinearLayout linearLayout;
+    ProgressBar progressBar;
+    @Override
+    protected void onPreExecute(){
+        progressBar = (ProgressBar) ((Activity) context).findViewById(R.id.autostart_setting_progressBar);
+        linearLayout = (LinearLayout) ((Activity) context).findViewById(R.id.settingProgressLayout);
+        linearLayout.setVisibility(View.VISIBLE);
+        publishProgress(0);
+    }
+
+    @Override
+    protected void onPostExecute(String i) {
+        linearLayout.setVisibility(View.GONE);
+    }
+
 
     @Override
     protected String doInBackground(List<HashMap<String, Object>>... params) {
@@ -25,6 +46,11 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
 
     public ToggleAsyncTask(Context context) {
         this.context = context;
+    }
+
+    protected void onProgressUpdate(Integer... progress) {
+        progressBar.setProgress(progress[0]);
+        //textView.setText(String.valueOf(progress[0]));
     }
 
     private boolean setADBEnabledState(ContentResolver cr, boolean enable) {
@@ -121,6 +147,7 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
                     packageName = (String)item.get("packageName");
                     enable = (Boolean)item.get("enable");
 
+                    Log.d(TAG,componentName+(enable?" enabled":" disbaled"));
                     //Toast.makeText(context,componentName+(enable?" enabled":" disbaled"),Toast.LENGTH_SHORT).show();
                     if (Utils.runRootCommand(String.format(set[0],
                             (enable ? "enable" : "disable"), packageName,
@@ -133,8 +160,12 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
                             // cases the timeout will improve the user experience.
                             25000)) {
                         success = true;
-                        break;
+                        publishProgress((int)((i+1)*100/length));
+                        //break;
                     }
+                }
+                if (success){
+                    break;
                 }
             }
 
