@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,12 +20,18 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+
+
+
 
 import com.zjuhjz.yapm.adapter.ProcessListAdapter;
 
 import java.util.HashMap;
 
-public class ProcessList extends ListFragment implements OnItemClickListener {
+public class ProcessList extends SherlockListFragment implements OnItemClickListener {
 	public static final String TAG = "yacleanerlog";
 
 	// private static List<RunningAppProcessInfo> procList = null;
@@ -81,7 +84,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		// TODO Auto-generated method stub
 		MenuInflater inflater = getActivity().getMenuInflater();
 		inflater.inflate(R.menu.processlist_contextmenu, menu);
-		MenuItem menuItem = menu.getItem(0);
+        android.view.MenuItem menuItem = menu.getItem(0);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		HashMap<String, Object> processInfo = yaMemoryInfo.processInfoList
 				.get(info.position);
@@ -95,8 +98,9 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+
+    @Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.process_addto_whitelist) {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
@@ -125,15 +129,17 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		return super.onContextItemSelected(item);
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		MenuItem populateItem = menu.add(Menu.NONE, REFRESH_ID, 0, "Refresh");
-		populateItem.setIcon(R.drawable.ic_menu_refresh);
-		MenuItemCompat.setShowAsAction(populateItem,
-				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-	}
+    @Override
+    public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        MenuItem populateItem = menu.add(Menu.NONE, REFRESH_ID, 0, "Refresh");
+        populateItem.setIcon(R.drawable.ic_menu_refresh);
+        populateItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-	@Override
+    }
+
+    @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// super.onCreateView(inflater, container, savedInstanceState);
@@ -180,6 +186,7 @@ public class ProcessList extends ListFragment implements OnItemClickListener {
 		setListAdapter(simpleAdapter);
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
+
 		textview.setText("Process Num: "
 				+ Integer.toString(yaMemoryInfo.processInfoList.size())
 				+ "\nfree RAM:" + yaMemoryInfo.availableMemory + " MB");

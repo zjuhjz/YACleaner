@@ -13,22 +13,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
 
-public class AutoStartAppList extends ListFragment implements
+public class AutoStartAppList extends SherlockListFragment implements
 		OnItemClickListener {
 	AutoStartAppListAdapter autoStartAppListAdapter;
 	public static final String TAG = "yacleanerlog";
@@ -61,16 +60,19 @@ public class AutoStartAppList extends ListFragment implements
 		return view;
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		MenuItem populateItem = menu.add(Menu.NONE, INCLUDE_SYSTEM_ID, 0,
-				"All App");
-		populateItem.setIcon(R.drawable.ic_include_system_package);
-		MenuItemCompat.setShowAsAction(populateItem,
-				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-	}
 
-	@Override
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        MenuItem populateItem = menu.add(Menu.NONE, INCLUDE_SYSTEM_ID, 0,
+                "All App");
+        populateItem.setIcon(R.drawable.ic_include_system_package_1);
+        populateItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    }
+
+    @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case INCLUDE_SYSTEM_ID:
@@ -78,6 +80,13 @@ public class AutoStartAppList extends ListFragment implements
 				autoStartInfo.changeIncludeSystemFlag();
 				autoStartAppListAdapter.notifyDataSetChanged();
 			}
+            if (autoStartInfo.getIncludeSystemFlag()){
+                item.setIcon(R.drawable.ic_include_system_package_2);
+            }
+            else {
+                item.setIcon(R.drawable.ic_include_system_package_1);
+            }
+
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -108,8 +117,9 @@ public class AutoStartAppList extends ListFragment implements
 		arg1.showContextMenu();
 	}
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+
+    @Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 		int id = item.getItemId();
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
@@ -162,6 +172,7 @@ public class AutoStartAppList extends ListFragment implements
                         component.put("componentName",entry.getKey());
                         component.put("enable",entry.getValue());
                         componentList.add(component);
+                        mOriComponentList.put((String)entry.getKey(),(Boolean)entry.getValue());
                     }
 
                 }

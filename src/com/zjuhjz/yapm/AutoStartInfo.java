@@ -216,27 +216,33 @@ public class AutoStartInfo {
         refreshListDataSource();
     }
 
+    public boolean getIncludeSystemFlag(){
+        return includeSystem;
+    }
+
 
     public boolean unBlockAll(HashMap<String, Object> list) {
         @SuppressWarnings("unchecked")
         List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
                 .get("intentInfoList");
-        List<String[]> unBlockComponentList = new ArrayList<String[]>();
+        List<HashMap<String,Object>> unBlockComponentList = new ArrayList<HashMap<String,Object>>();
         for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            String[] unBlockComponent = new String[]{
-                    (String) mIntentsInfo.get("component_name"),
-                    (String) mIntentsInfo.get("package_name")};
-            unBlockComponentList.add(unBlockComponent);
+            HashMap<String,Object> blockComponent = new  HashMap<String,Object>();
+            blockComponent.put("componentName",(String) mIntentsInfo.get("component_name"));
+            blockComponent.put("packageName",(String) mIntentsInfo.get("package_name"));
+            blockComponent.put("enable",true);
+            unBlockComponentList.add(blockComponent);
         }
-        for (String[] i : unBlockComponentList) {
-            setComponentEnable(true, i[0], i[1]);
-        }
+        Log.d(TAG,"ready??");
+        ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
+        toggleAsyncTask.execute(unBlockComponentList);
 
-        list.put("historyStatus", "default");
+
+        list.put("historyStatus", "default" );
         historyList.put((String) list.get("package_name"), "default");
         saveHistory();
-        Toast.makeText(context, "unblock succesfully", Toast.LENGTH_SHORT)
-                .show();
+        //Toast.makeText(context, "unblock succesfully", Toast.LENGTH_SHORT)
+        //        .show();
         return true;
     }
 
@@ -244,22 +250,20 @@ public class AutoStartInfo {
         @SuppressWarnings("unchecked")
         List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
                 .get("intentInfoList");
-        List<String[]> blockComponentList = new ArrayList<String[]>();
+        List<HashMap<String,Object>> blockComponentList = new ArrayList<HashMap<String,Object>>();
         for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            String[] blockComponent = new String[]{
-                    (String) mIntentsInfo.get("component_name"),
-                    (String) mIntentsInfo.get("package_name")};
+            HashMap<String,Object> blockComponent = new  HashMap<String,Object>();
+            blockComponent.put("componentName",(String) mIntentsInfo.get("component_name"));
+            blockComponent.put("packageName",(String) mIntentsInfo.get("package_name"));
+            blockComponent.put("enable",false);
             blockComponentList.add(blockComponent);
         }
-        for (String[] i : blockComponentList) {
-            setComponentEnable(false, i[0], i[1]);
-        }
+        Log.d(TAG,"ready??");
+        ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
+        toggleAsyncTask.execute(blockComponentList);
 
-        list.put("historyStatus", "blockedCompeletely");
-        historyList.put((String) list.get("package_name"), "blockedCompeletely");
-        saveHistory();
-        Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
-                .show();
+        //Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
+        //        .show();
         return true;
     }
 
@@ -284,7 +288,9 @@ public class AutoStartInfo {
             setComponentEnable(false, i[0], i[1]);
         }
 
+
         list.put("historyStatus", "blockedStrongly");
+        Log.d(TAG,"ready??");
         historyList.put((String) list.get("package_name"), "blockedStrongly");
         saveHistory();
         Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
