@@ -29,7 +29,7 @@ public class ProcessListAdapter extends SimpleAdapter {
 	{
 		View view = super.getView(position, convertView, parent);
 		ImageView imageView = (ImageView)view.findViewById(R.id.process_list_app_icon);
-		view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+		view.setBackgroundColor(android.R.attr.colorBackground);
 		processInfo = data.get(position);
 		imageView.setImageDrawable((Drawable)processInfo.get("icon"));
 		if (processInfo.get("whitelist")=="1"){

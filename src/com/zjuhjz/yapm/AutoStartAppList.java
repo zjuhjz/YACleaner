@@ -6,10 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -106,8 +104,8 @@ public class AutoStartAppList extends SherlockListFragment implements
 		Context context = getActivity();
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
 				autoStartInfo.appInfoList, R.layout.autostart_app_list_item,
-				new String[] { "appName", "historyStatus" }, new int[] {
-						R.id.autostart_app_name, R.id.autostart_status });
+				new String[] { "appName"}, new int[] {
+						R.id.autostart_app_name});
 		setListAdapter(autoStartAppListAdapter);
 	}
 

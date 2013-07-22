@@ -19,6 +19,7 @@
 	   android:layout_height="wrap_content"
 	   android:layout_marginLeft="10dp"
 	   android:layout_weight="1"/>
+    <!--
 	<TextView android:id="@+id/autostart_status"
 	   android:textColor="#999999" 
 	   android:layout_width="150dp" 
@@ -26,4 +27,5 @@
 	   android:layout_gravity="right|bottom"
 	   android:gravity="right"
 	   android:layout_marginRight="10dp"/>
+	   -->
 </LinearLayout>

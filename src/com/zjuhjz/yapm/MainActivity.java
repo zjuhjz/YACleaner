@@ -1,14 +1,9 @@
 package com.zjuhjz.yapm;
 
-//import android.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-import com.zjuhjz.yapm.ProcessList;
-import com.zjuhjz.yapm.R;
-
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.OnNavigationListener {
 	@Override
@@ -18,7 +13,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        final String[] dropDownValues = new String[]{"Autostart Manager","Process Manager"};
+        final String[] dropDownValues = new String[]{"Autostart Manager","Process  Manager"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(actionBar.getThemedContext(),
                 android.R.layout.simple_spinner_item, android.R.id.text1,
                 dropDownValues);
@@ -38,7 +33,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_container, processList).commit();
         }
-
         return false;
     }
 }

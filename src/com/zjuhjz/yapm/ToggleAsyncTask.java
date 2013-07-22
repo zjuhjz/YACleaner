@@ -37,7 +37,6 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
         linearLayout.setVisibility(View.GONE);
     }
 
-
     @Override
     protected String doInBackground(List<HashMap<String, Object>>... params) {
         setComponentEnable(params[0]);
@@ -50,7 +49,6 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
 
     protected void onProgressUpdate(Integer... progress) {
         progressBar.setProgress(progress[0]);
-        //textView.setText(String.valueOf(progress[0]));
     }
 
     private boolean setADBEnabledState(ContentResolver cr, boolean enable) {
