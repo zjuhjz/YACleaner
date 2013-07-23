@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<menu xmlns:android="http://schemas.android.com/apk/res/android">  
+    <item android:id="@+id/process_addto_whitelist" android:title="@string/menu_set_autostart_1" />
+    <item android:id="@+id/process_detail" android:title="@string/process_detail"/>
+</menu>  
