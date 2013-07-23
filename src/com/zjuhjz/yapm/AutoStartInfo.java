@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.zjuhjz.yapm.db.DB;
 import com.zjuhjz.yapm.db.IntentFilterInfo;
 import com.zjuhjz.yapm.tool.Constants;
 
@@ -34,6 +35,10 @@ import java.util.Map;
 //     <HashMap<String, Object>intentsAppInfoList to class object
 public class AutoStartInfo {
     // all broadcast Actions
+    public final static int NON_EXSISTS = -1;
+    public final static int ALL_DISABLED = 0;
+    public final static int PARTIALLY_DISABLED = 1;
+    public final static int ALl_ENABLED = 2;
 
     // Intents to App
     List<HashMap<String, Object>> intentsInfoList = null;
@@ -151,6 +156,10 @@ public class AutoStartInfo {
         String appName;
         String lastAppName = "";
         String historyStatus;
+        int bootIntent = 0;
+        int autoIntent = 0;
+        int mEnable;
+
         for (IntentFilterInfo intentFilterInfo : info) {
             appName = intentFilterInfo.componentInfo.packageInfo.packageLabel == null ? intentFilterInfo.componentInfo.packageInfo.packageName
                     : intentFilterInfo.componentInfo.packageInfo.packageLabel;
@@ -160,6 +169,10 @@ public class AutoStartInfo {
                 continue;
             }
             if (!appName.equals(lastAppName)) {
+                if (appItem!=null){
+                    appItem.put("bootIntent",bootIntent);
+                    appItem.put("autoIntent",autoIntent);
+                }
                 appItem = new HashMap<String, Object>();
                 appInfoList.add(appItem);
                 appItem.put("appName", appName);
@@ -178,9 +191,72 @@ public class AutoStartInfo {
                 appItem.put("intentInfoList", appIntentsInfoList);
                 componentList = new HashMap<String, Boolean>();
                 appItem.put("componentList", componentList);
+                bootIntent = -1;
+                autoIntent = -1;
+
+            }
+            appIntentsInfo = new HashMap<String, Object>();
+            mEnable = intentFilterInfo.componentInfo.currentEnabledState == 2 ? 0 : 1;
+            if (DB.bootIntentList.contains(intentName)){
+                if (bootIntent== NON_EXSISTS){
+                    if (mEnable==0){
+                        bootIntent = ALL_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        bootIntent = ALl_ENABLED;
+                    }
+                }
+                else if (bootIntent == ALL_DISABLED){
+                    if (mEnable==0){
+                        bootIntent = ALL_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        bootIntent = PARTIALLY_DISABLED;
+                    }
+                }
+                else if (bootIntent == PARTIALLY_DISABLED){
+                    //
+                }
+                else if (bootIntent == ALl_ENABLED){
+                    if (mEnable==0){
+                        bootIntent = PARTIALLY_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        bootIntent = ALl_ENABLED;
+                    }
+                }
+            }
+            else if (DB.autoIntentList.contains(intentName)){
+                if (autoIntent== NON_EXSISTS){
+                    if (mEnable==0){
+                        autoIntent = ALL_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        autoIntent = ALl_ENABLED;
+                    }
+                }
+                else if (autoIntent == ALL_DISABLED){
+                    if (mEnable==0){
+                        autoIntent = ALL_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        autoIntent = PARTIALLY_DISABLED;
+                    }
+                }
+                else if (autoIntent == PARTIALLY_DISABLED){
+                    //
+                }
+                else if (autoIntent == ALl_ENABLED){
+                    if (mEnable==0){
+                        autoIntent = PARTIALLY_DISABLED;
+                    }
+                    else if (mEnable==1){
+                        autoIntent = ALl_ENABLED;
+                    }
+                }
             }
 
-            appIntentsInfo = new HashMap<String, Object>();
+
             appIntentsInfo.put("component_name",
                     intentFilterInfo.componentInfo.componentName);
             componentList.put(intentFilterInfo.componentInfo.componentName, intentFilterInfo.componentInfo.currentEnabledState == 2 ? false
@@ -201,6 +277,10 @@ public class AutoStartInfo {
                     + intentFilterInfo.componentInfo.componentName);
             appIntentsInfoList.add(appIntentsInfo);
             lastAppName = appName;
+        }
+        if (appItem!=null){
+            appItem.put("bootIntent",bootIntent);
+            appItem.put("autoIntent",autoIntent);
         }
         saveHistory();
     }
