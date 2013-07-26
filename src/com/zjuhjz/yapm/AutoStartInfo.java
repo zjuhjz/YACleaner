@@ -42,9 +42,6 @@ public class AutoStartInfo {
 
     // Intents to App
     List<HashMap<String, Object>> intentsInfoList = null;
-    List<HashMap<String, Object>> intentsAppInfoList = null;
-    HashMap<String, Object> intentItem = null;
-    HashMap<String, Object> intentsAppInfo = null;
 
     // App to Intents
     List<HashMap<String, Object>> appInfoList = null;
@@ -118,11 +115,10 @@ public class AutoStartInfo {
         } catch (IOException e) {
             // e.printStackTrace();
         }
-
         return true;
     }
 
-    private boolean saveHistory() {
+    private boolean saveHistory(){
         StringBuffer fileContent = new StringBuffer("");
         for (Map.Entry<String, String> entry : historyList.entrySet()) {
             fileContent.append(entry.getKey() + " " + entry.getValue() + "\n");
@@ -193,7 +189,6 @@ public class AutoStartInfo {
                 appItem.put("componentList", componentList);
                 bootIntent = -1;
                 autoIntent = -1;
-
             }
             appIntentsInfo = new HashMap<String, Object>();
             mEnable = intentFilterInfo.componentInfo.currentEnabledState == 2 ? 0 : 1;
@@ -255,8 +250,6 @@ public class AutoStartInfo {
                     }
                 }
             }
-
-
             appIntentsInfo.put("component_name",
                     intentFilterInfo.componentInfo.componentName);
             componentList.put(intentFilterInfo.componentInfo.componentName, intentFilterInfo.componentInfo.currentEnabledState == 2 ? false

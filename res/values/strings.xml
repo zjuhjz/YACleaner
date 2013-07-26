@@ -16,4 +16,5 @@
 	<string name="loading">Loading autostart info...</string>
     <string name="process_detail">Process information</string>
     <string name="setting">auto start setting</string>
+    <string name="app_name_free">Autostart Disabler Free</string>
 </resources>

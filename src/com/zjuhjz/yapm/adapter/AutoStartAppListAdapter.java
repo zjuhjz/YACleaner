@@ -52,13 +52,13 @@ public class AutoStartAppListAdapter extends SimpleAdapter {
                 bootTextView.setTextColor(Color.parseColor("#000000"));
                 break;
             case AutoStartInfo.PARTIALLY_DISABLED:
-                bootText.setSpan(new StrikethroughSpan(),0,bootText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                bootTextView.setBackgroundColor(Color.parseColor("#00FF00"));
-                bootTextView.setTextColor(Color.parseColor("#FFFFFF"));
-                break;
+                //bootText.setSpan(new StrikethroughSpan(),0,bootText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                //bootTextView.setBackgroundColor(Color.parseColor("#00FF00"));
+                //bootTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                //break;
             case AutoStartInfo.ALl_ENABLED:
-                bootTextView.setBackgroundColor(Color.parseColor("#00FF00"));
-                bootTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                bootTextView.setBackgroundColor(android.R.attr.colorBackground);
+                bootTextView.setTextColor(Color.parseColor("#000000"));
                 break;
             case AutoStartInfo.NON_EXSISTS:
                 bootTextView.setBackgroundColor(android.R.attr.colorBackground);
@@ -75,13 +75,13 @@ public class AutoStartAppListAdapter extends SimpleAdapter {
 
                 break;
             case AutoStartInfo.PARTIALLY_DISABLED:
-                autoText.setSpan(new StrikethroughSpan(),0,bootText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                autoTextView.setBackgroundColor(Color.parseColor("#00FF00"));
-                autoTextView.setTextColor(Color.parseColor("#FFFFFF"));
-                break;
+                //autoText.setSpan(new StrikethroughSpan(),0,bootText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                //autoTextView.setBackgroundColor(Color.parseColor("#00FF00"));
+                //autoTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                //break;
             case AutoStartInfo.ALl_ENABLED:
-                autoTextView.setBackgroundColor(Color.parseColor("#00FF00"));
-                autoTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                autoTextView.setBackgroundColor(android.R.attr.colorBackground);
+                autoTextView.setTextColor(Color.parseColor("#000000"));
                 break;
             case AutoStartInfo.NON_EXSISTS:
                 autoTextView.setBackgroundColor(android.R.attr.colorBackground);

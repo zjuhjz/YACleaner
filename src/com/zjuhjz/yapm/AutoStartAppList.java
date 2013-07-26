@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Menu;
+import com.zjuhjz.yapm.db.DB;
 
 public class AutoStartAppList extends SherlockListFragment implements
 		OnItemClickListener {
@@ -175,10 +176,15 @@ public class AutoStartAppList extends SherlockListFragment implements
 
                 }
             }
+
+            iterator = mComponentList.entrySet().iterator();
+            while (iterator.hasNext()){
+                entry = (Map.Entry)iterator.next();
+
+            }
+
             ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
             toggleAsyncTask.execute(componentList);
-
-
         }
     }
 }
