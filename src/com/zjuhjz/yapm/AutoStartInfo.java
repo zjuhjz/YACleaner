@@ -2,7 +2,6 @@ package com.zjuhjz.yapm;
 
 import android.Manifest.permission;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -16,8 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.zjuhjz.yapm.db.AppItemObject;
 import com.zjuhjz.yapm.db.DB;
 import com.zjuhjz.yapm.db.IntentFilterInfo;
+import com.zjuhjz.yapm.db.IntentInfoObject;
 import com.zjuhjz.yapm.tool.Constants;
 
 import java.io.FileInputStream;
@@ -44,13 +45,15 @@ public class AutoStartInfo {
     List<HashMap<String, Object>> intentsInfoList = null;
 
     // App to Intents
-    List<HashMap<String, Object>> appInfoList = null;
+    //List<HashMap<String, Object>> appInfoList = null;
     List<HashMap<String, Object>> appIntentsInfoList = null;
-    HashMap<String, Object> appItem = null;
+    //HashMap<String, Object> appItem = null;
     HashMap<String, Object> appIntentsInfo = null;
 
-    //List<String> componentList = null;
-    //HashSet<String> componentList = null;
+
+    public List<AppItemObject> appItemObjects;
+
+
     HashMap<String, Boolean> componentList = null;
     private static final String TAG = "yacleanerlog";
     PackageManager packageManager = null;
@@ -65,7 +68,8 @@ public class AutoStartInfo {
     AutoStartInfo(Context context) {
         this.context = context;
         intentsInfoList = new ArrayList<HashMap<String, Object>>();
-        appInfoList = new ArrayList<HashMap<String, Object>>();
+        //appInfoList = new ArrayList<HashMap<String, Object>>();
+        appItemObjects = new ArrayList<AppItemObject>();
         includeSystem = false;
         packageManager = context.getPackageManager();
         historyList = new HashMap<String, String>();
@@ -74,10 +78,8 @@ public class AutoStartInfo {
     }
 
     private void loadReceiverReader() {
-        //ReceiverReader receiverReader = new ReceiverReader(context, null);
         AutostartInfoLoadTask autostartInfoLoadTask = new AutostartInfoLoadTask();
         autostartInfoLoadTask.execute();
-        //info = receiverReader.load();
     }
 
     public boolean loadHistory() {
@@ -147,11 +149,17 @@ public class AutoStartInfo {
                 return 0;
             }
         });
-        appInfoList.clear();
+        //appInfoList.clear();
+        appItemObjects.clear();
+
+
+
 
         String appName;
         String lastAppName = "";
         String historyStatus;
+        AppItemObject appItemObject = null;
+        IntentInfoObject intentInfoObject;
         int bootIntent = 0;
         int autoIntent = 0;
         int mEnable;
@@ -165,28 +173,45 @@ public class AutoStartInfo {
                 continue;
             }
             if (!appName.equals(lastAppName)) {
-                if (appItem!=null){
+                /*if (appItem!=null){
                     appItem.put("bootIntent",bootIntent);
                     appItem.put("autoIntent",autoIntent);
+                }*/
+
+                if (appItemObject!= null){
+                    appItemObject.bootIntent = bootIntent;
+                    appItemObject.autoIntent = autoIntent;
                 }
-                appItem = new HashMap<String, Object>();
+
+                //////////////////////////////////////////////////////////////////////////
+                appItemObject = new AppItemObject();
+                appItemObjects.add(appItemObject);
+                appItemObject.appName = appName;
+                appItemObject.appIcon = intentFilterInfo.componentInfo.packageInfo.icon;
+                appItemObject.packageName = intentFilterInfo.componentInfo.packageInfo.packageName;
+                appItemObject.bootIntent = -1;
+                appItemObject.autoIntent = -1;
+                appItemObject.intentInfoObjects = new ArrayList<IntentInfoObject>();
+                //////////////////////////////////////////////////////////////////////////
+
+                /*appItem = new HashMap<String, Object>();
                 appInfoList.add(appItem);
                 appItem.put("appName", appName);
                 appItem.put("appIcon",
                         intentFilterInfo.componentInfo.packageInfo.icon);
                 appItem.put("package_name",
-                        intentFilterInfo.componentInfo.packageInfo.packageName);
+                        intentFilterInfo.componentInfo.packageInfo.packageName);*/
                 historyStatus = historyList
                         .get(intentFilterInfo.componentInfo.packageInfo.packageName);
                 if (historyStatus == null) {
                     historyStatus = "default";
                 }
-                appItem.put("historyStatus", historyStatus);
-                historyList.put(intentFilterInfo.componentInfo.packageInfo.packageName, historyStatus);
-                appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
-                appItem.put("intentInfoList", appIntentsInfoList);
+                //appItem.put("historyStatus", historyStatus);
+                //historyList.put(intentFilterInfo.componentInfo.packageInfo.packageName, historyStatus);
+                //appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
+                //appItem.put("intentInfoList", appIntentsInfoList);
                 componentList = new HashMap<String, Boolean>();
-                appItem.put("componentList", componentList);
+                //appItem.put("componentList", componentList);
                 bootIntent = -1;
                 autoIntent = -1;
             }
@@ -252,8 +277,8 @@ public class AutoStartInfo {
             }
             appIntentsInfo.put("component_name",
                     intentFilterInfo.componentInfo.componentName);
-            componentList.put(intentFilterInfo.componentInfo.componentName, intentFilterInfo.componentInfo.currentEnabledState == 2 ? false
-                    : true);
+//            componentList.put(intentFilterInfo.componentInfo.componentName, intentFilterInfo.componentInfo.currentEnabledState == 2 ? false
+//                    : true);
             appIntentsInfo.put("package_name",
                     intentFilterInfo.componentInfo.packageInfo.packageName);
             appIntentsInfo.put("is_system",
@@ -268,13 +293,38 @@ public class AutoStartInfo {
             appIntentsInfo.put("intentName", intentName);
             appIntentsInfo.put("display", intentName + "\n"
                     + intentFilterInfo.componentInfo.componentName);
-            appIntentsInfoList.add(appIntentsInfo);
+            //appIntentsInfoList.add(appIntentsInfo);
+
+
+            //////////////////////////////////////////////////////////////////
+            intentInfoObject = new IntentInfoObject();
+            intentInfoObject.componentName = intentFilterInfo.componentInfo.componentName;
+            intentInfoObject.packageName = intentFilterInfo.componentInfo.packageInfo.packageName;
+            intentInfoObject.isSystem = intentFilterInfo.componentInfo.packageInfo.isSystem?1:0;
+            intentInfoObject.enableState = intentFilterInfo.componentInfo.currentEnabledState;
+            intentInfoObject.defaultEnabled = intentFilterInfo.componentInfo.defaultEnabled?1:0;
+            //TODO
+            intentInfoObject.isEnable = intentFilterInfo.componentInfo.currentEnabledState == 2 ? 0
+                    : 1;
+            intentInfoObject.intentName = intentName;
+            appItemObject.intentInfoObjects.add(intentInfoObject);
+
+
+
+
+
+
+
+
+
+
+
             lastAppName = appName;
         }
-        if (appItem!=null){
-            appItem.put("bootIntent",bootIntent);
-            appItem.put("autoIntent",autoIntent);
-        }
+//        if (appItem!=null){
+//            appItem.put("bootIntent",bootIntent);
+//            appItem.put("autoIntent",autoIntent);
+//        }
         saveHistory();
     }
 
@@ -294,49 +344,28 @@ public class AutoStartInfo {
     }
 
 
-    public boolean unBlockAll(HashMap<String, Object> list) {
-        @SuppressWarnings("unchecked")
-        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
-                .get("intentInfoList");
-        List<HashMap<String,Object>> unBlockComponentList = new ArrayList<HashMap<String,Object>>();
-        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            HashMap<String,Object> blockComponent = new  HashMap<String,Object>();
-            blockComponent.put("componentName",(String) mIntentsInfo.get("component_name"));
-            blockComponent.put("packageName",(String) mIntentsInfo.get("package_name"));
-            blockComponent.put("enable",true);
-            unBlockComponentList.add(blockComponent);
+    public boolean unBlockAll(ArrayList<IntentInfoObject> info) {
+        ArrayList<IntentInfoObject> intentInfoObjects = (ArrayList<IntentInfoObject>)info.clone();
+
+        for (IntentInfoObject intentInfoObject : intentInfoObjects) {
+            intentInfoObject.isEnable = 1;
         }
         Log.d(TAG,"ready??");
         ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
-        toggleAsyncTask.execute(unBlockComponentList);
-
-
-        list.put("historyStatus", "default" );
-        historyList.put((String) list.get("package_name"), "default");
+        toggleAsyncTask.execute(intentInfoObjects);
         saveHistory();
-        //Toast.makeText(context, "unblock succesfully", Toast.LENGTH_SHORT)
-        //        .show();
         return true;
     }
 
-    public boolean blockCompelete(HashMap<String, Object> list) {
-        @SuppressWarnings("unchecked")
-        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
-                .get("intentInfoList");
-        List<HashMap<String,Object>> blockComponentList = new ArrayList<HashMap<String,Object>>();
-        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            HashMap<String,Object> blockComponent = new  HashMap<String,Object>();
-            blockComponent.put("componentName",(String) mIntentsInfo.get("component_name"));
-            blockComponent.put("packageName",(String) mIntentsInfo.get("package_name"));
-            blockComponent.put("enable",false);
-            blockComponentList.add(blockComponent);
+    public boolean blockCompelete(ArrayList<IntentInfoObject> info) {
+        ArrayList<IntentInfoObject> intentInfoObjects = (ArrayList<IntentInfoObject>)info.clone();
+        for (IntentInfoObject intentInfoObject:intentInfoObjects){
+            intentInfoObject.isEnable = 0;
         }
-        Log.d(TAG,"ready??");
-        ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
-        toggleAsyncTask.execute(blockComponentList);
 
-        //Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
-        //        .show();
+        ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
+        toggleAsyncTask.execute(intentInfoObjects);
+
         return true;
     }
 

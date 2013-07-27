@@ -6,11 +6,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.ads.*;
-import com.zjuhjz.yapmfree.R;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.OnNavigationListener, AdListener {
     public final static int FREE_VERSION = 0;

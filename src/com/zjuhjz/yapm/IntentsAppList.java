@@ -3,7 +3,6 @@ package com.zjuhjz.yapm;
 import java.util.HashMap;
 import java.util.List;
 
-import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.adapter.IntentAppListAdapter;
 
 import android.annotation.SuppressLint;

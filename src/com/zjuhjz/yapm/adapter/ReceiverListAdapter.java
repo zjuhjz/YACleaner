@@ -1,7 +1,6 @@
 package com.zjuhjz.yapm.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +11,13 @@ import android.widget.TextView;
 
 import com.zjuhjz.yapm.ProcessList;
 import com.zjuhjz.yapm.R;
+import com.zjuhjz.yapm.db.IntentInfoObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Inflater;
 
 /**
  * Created by Administrator on 13-6-20.
@@ -26,31 +25,19 @@ import java.util.zip.Inflater;
 public class ReceiverListAdapter extends BaseAdapter{
     final String TAG = ProcessList.TAG;
 
-    HashMap<String,Boolean> componentList;
-    List<String> componentName;
-    List<Boolean> componentStatus;
+    ArrayList<IntentInfoObject> intentInfoObjects;
     LayoutInflater inflater;
     Context context;
-    public  ReceiverListAdapter(Context context,HashMap<String,Boolean> componentList){
+    public  ReceiverListAdapter(Context context,ArrayList<IntentInfoObject> intentInfoObjects){
         super();
-        this.componentList = componentList;
+        this.intentInfoObjects = intentInfoObjects;
         this.context = context;
-        componentName = new ArrayList<String>();
-        componentStatus = new ArrayList<Boolean>();
-        if (componentList!=null && componentList.size()>0){
-            Map.Entry pairs ;
-            for ( Iterator it =componentList.entrySet().iterator();it.hasNext();){
-                pairs = (Map.Entry)it.next();
-                componentName.add((String)pairs.getKey());
-                componentStatus.add((Boolean)pairs.getValue());
-            }
-        }
         inflater =LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return componentList.size();
+        return intentInfoObjects.size();
     }
 
     @Override
@@ -72,13 +59,12 @@ public class ReceiverListAdapter extends BaseAdapter{
         TextView receiverName = (TextView)mView.findViewById(R.id.receiver_name);
         CheckBox receiverStatus = (CheckBox)mView.findViewById(R.id.receiver_checkbox);
 
-        receiverName.setText(componentName.get(i));
-        receiverStatus.setChecked(componentStatus.get(i));
+        receiverName.setText(intentInfoObjects.get(i).componentName);
+        receiverStatus.setChecked(intentInfoObjects.get(i).isEnable==1?true:false);
         receiverStatus.setOnCheckedChangeListener(new MyOnCheckedChangeListener(i) {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                componentStatus.set(index,b);
-                componentList.put(componentName.get(index),componentStatus.get(index));
+                intentInfoObjects.get(index).isEnable = b?1:0;
             }
         });
         return mView;
@@ -89,7 +75,6 @@ public class ReceiverListAdapter extends BaseAdapter{
         public  MyOnCheckedChangeListener(int index){
             this.index = index;
         }
-
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 

@@ -4,35 +4,35 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
 
 import com.zjuhjz.yapm.adapter.ReceiverListAdapter;
+import com.zjuhjz.yapm.db.AppItemObject;
+import com.zjuhjz.yapm.db.IntentInfoObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ReceiverList extends ListActivity {
-    HashMap<String,Boolean> mComponentList = null;
+    //HashMap<String,Boolean> mComponentList = null;
     HashMap<String,Boolean> mComponentListClone = null;
+    ArrayList<IntentInfoObject> intentInfoObjects;
     String packageName;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.receiver_list);
         Intent intent = getIntent();
-        mComponentList= (HashMap<String,Boolean>)intent.getSerializableExtra("ComponentList");
+        intentInfoObjects = intent.getParcelableArrayListExtra("IntentInfoObjects");
         packageName = intent.getStringExtra("PackageName");
-        mComponentListClone =(HashMap<String,Boolean>)mComponentList.clone();
-        ReceiverListAdapter receiverListAdapter = new ReceiverListAdapter(this,mComponentListClone);
+        ReceiverListAdapter receiverListAdapter = new ReceiverListAdapter(this,intentInfoObjects);
         setListAdapter(receiverListAdapter);
     }
 
     public void confirm(View view){
-        if(mComponentList==null){
+        if(intentInfoObjects==null){
             return;
         }
         Intent data = getIntent();
-        data.putExtra("ComponentList",mComponentListClone);
+        data.putParcelableArrayListExtra("IntentInfoObjects",intentInfoObjects);
         data.putExtra("PackageName",packageName);
         setResult(1, data);
         finish();

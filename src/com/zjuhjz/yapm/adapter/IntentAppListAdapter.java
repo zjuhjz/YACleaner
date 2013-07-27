@@ -18,9 +18,7 @@ public class IntentAppListAdapter extends SimpleAdapter {
 	private List<? extends Map<String, ?>> data;
 	HashMap<String, Object> intentsAppInfo = null;
 	int enableState;
-	boolean defaulEnable;
 	TextView textView;
-	// HashMap<String,String> processInfo;
 
 	public IntentAppListAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -35,7 +33,6 @@ public class IntentAppListAdapter extends SimpleAdapter {
 		View view = super.getView(position, convertView, parent);
 		intentsAppInfo = (HashMap<String, Object>) data.get(position);
 		enableState = (Integer) intentsAppInfo.get("enable_state");
-		//defaulEnable = (Integer) intentsAppInfo.get("enable_state");
 		view.setBackgroundColor(Color.parseColor("#00FFFF"));
 		textView = (TextView)view.findViewById(R.id.com_zjuhjz_yacleaner_IntentsAppList_appname);
 		textView.setTextColor(Color.BLUE);

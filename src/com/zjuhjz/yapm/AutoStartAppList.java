@@ -24,14 +24,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Menu;
-import com.zjuhjz.yapm.db.DB;
+import com.zjuhjz.yapm.db.AppItemObject;
+import com.zjuhjz.yapm.db.IntentInfoObject;
 
 public class AutoStartAppList extends SherlockListFragment implements
 		OnItemClickListener {
 	AutoStartAppListAdapter autoStartAppListAdapter;
 	public static final String TAG = "yacleanerlog";
 	AutoStartInfo autoStartInfo;
-    HashMap<String, Object> mAppitem;
+    AppItemObject  appItemObject;
 	static final int INCLUDE_SYSTEM_ID = Menu.FIRST;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -104,9 +105,7 @@ public class AutoStartAppList extends SherlockListFragment implements
 	private void showAppInfo() {
 		Context context = getActivity();
 		autoStartAppListAdapter = new AutoStartAppListAdapter(context,
-				autoStartInfo.appInfoList, R.layout.autostart_app_list_item,
-				new String[] { "appName"}, new int[] {
-						R.id.autostart_app_name});
+				autoStartInfo.appItemObjects);
 		setListAdapter(autoStartAppListAdapter);
 	}
 
@@ -122,8 +121,9 @@ public class AutoStartAppList extends SherlockListFragment implements
 		int id = item.getItemId();
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
-		mAppitem = autoStartInfo.appInfoList
-				.get(info.position);
+//		mAppitem = autoStartInfo.appInfoList
+//				.get(info.position);
+        appItemObject = autoStartInfo.appItemObjects.get(info.position);
 		/*if (id == R.id.block_gentle) {
 			autoStartInfo.blockGentle(mAppitem);
 			// List<HashMap<String,Object>> mIntentsInfoList =
@@ -131,15 +131,13 @@ public class AutoStartAppList extends SherlockListFragment implements
 		} else if (id == R.id.block_strong) {
 			autoStartInfo.blockStrong(mAppitem);
 		} else */if (id == R.id.block_complete) {
-			autoStartInfo.blockCompelete(mAppitem);
+			autoStartInfo.blockCompelete(appItemObject.intentInfoObjects);
 		} else if (id == R.id.unblock) {
-			autoStartInfo.unBlockAll(mAppitem);
+			autoStartInfo.unBlockAll(appItemObject.intentInfoObjects);
 		} else if (id == R.id.block_manually){
-            HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)mAppitem.get("componentList");
+
             Intent intent = new Intent(getActivity(),ReceiverList.class);
-            intent.putExtra("ComponentList",mComponentList);
-            intent.putExtra("PackageName",(String)mAppitem.get("package_name"));
-            Log.d(TAG,"packageName:"+mAppitem.get("package_name"));
+            intent.putParcelableArrayListExtra("IntentInfoObjects", appItemObject.intentInfoObjects);
             startActivityForResult(intent, 1);
         }
 		autoStartAppListAdapter.notifyDataSetChanged();
@@ -153,38 +151,27 @@ public class AutoStartAppList extends SherlockListFragment implements
             return;
         }
         if (resultCode==1){
-            HashMap<String,Boolean> mComponentList = (HashMap<String,Boolean>)data.getSerializableExtra("ComponentList");
-            HashMap<String,Boolean> mOriComponentList = (HashMap<String,Boolean>)mAppitem.get("componentList");
-            String packageName = data.getStringExtra("PackageName");
-            Iterator iterator = mComponentList.entrySet().iterator();
-            HashMap<String,Object> component ;
-            List<HashMap<String,Object>> componentList = new ArrayList<HashMap<String, Object>>();
-            Map.Entry entry;
-            List<HashMap<String, Object>> mIntentInfoList = (List<HashMap<String, Object>>)mAppitem.get("intentInfoList");
-            if (mComponentList.size()==mOriComponentList.size()){
-                for (;iterator.hasNext();){
-                    entry = (Map.Entry)iterator.next();
-                    if (entry.getValue()!=mOriComponentList.get(entry.getKey()))
-                    {
-                        component = new HashMap<String, Object>();
-                        component.put("packageName",packageName);
-                        component.put("componentName",entry.getKey());
-                        component.put("enable",entry.getValue());
-                        componentList.add(component);
-                        mOriComponentList.put((String)entry.getKey(),(Boolean)entry.getValue());
-                    }
 
+
+            ArrayList<IntentInfoObject> newIntentInfoObjects = data.getParcelableArrayListExtra("IntentInfoObjects");
+            ArrayList<IntentInfoObject> oriIntentInfoObjects = appItemObject.intentInfoObjects;
+            ArrayList<IntentInfoObject> modifiedIntentInfoObjects = new ArrayList<IntentInfoObject>();
+            if (newIntentInfoObjects.get(0).packageName!=oriIntentInfoObjects.get(0).packageName)
+            {
+                return;
+            }
+            for (int i = 0 ; i < newIntentInfoObjects.size(); ++i){
+                if (newIntentInfoObjects.get(i).isEnable!=oriIntentInfoObjects.get(i).isEnable){
+                    IntentInfoObject intentInfoObject = new IntentInfoObject();
+                    intentInfoObject.packageName = newIntentInfoObjects.get(i).packageName;
+                    intentInfoObject.componentName = newIntentInfoObjects.get(i).componentName;
+                    intentInfoObject.isEnable = newIntentInfoObjects.get(i).isEnable;
+                    modifiedIntentInfoObjects.add(intentInfoObject);
                 }
             }
 
-            iterator = mComponentList.entrySet().iterator();
-            while (iterator.hasNext()){
-                entry = (Map.Entry)iterator.next();
-
-            }
-
             ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
-            toggleAsyncTask.execute(componentList);
+            toggleAsyncTask.execute(modifiedIntentInfoObjects);
         }
     }
 }

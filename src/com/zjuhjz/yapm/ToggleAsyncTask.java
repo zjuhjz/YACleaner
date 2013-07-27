@@ -12,13 +12,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.zjuhjz.yapm.db.IntentFilterInfo;
+import com.zjuhjz.yapm.db.IntentInfoObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, Integer, String> {
+public class ToggleAsyncTask extends AsyncTask<ArrayList<IntentInfoObject>, Integer, String> {
 
     private Context context = null;
     public String TAG = ProcessList.TAG;
@@ -38,7 +38,7 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
     }
 
     @Override
-    protected String doInBackground(List<HashMap<String, Object>>... params) {
+    protected String doInBackground(ArrayList<IntentInfoObject>... params) {
         setComponentEnable(params[0]);
         return null;
     }
@@ -73,9 +73,9 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
         }
     }
 
-    private boolean setComponentEnable(List<HashMap<String, Object>> info) {
+    private boolean setComponentEnable(ArrayList<IntentInfoObject> info) {
         ContentResolver cr = context.getContentResolver();
-        HashMap<String, Object> item;
+        IntentInfoObject item;
         String componentName;
         String packageName;
         boolean enable;
@@ -85,9 +85,9 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
         length = info.size();
         for (int i = 0; i < length; ++i) {
             item = info.get(i);
-            componentName = (String)item.get("componentName");
-            packageName = (String)item.get("packageName");
-            enable = (Boolean)item.get("enable");
+            componentName = item.componentName;
+            packageName = item.packageName;
+            //enable = item.isEnable==1?true:false;
             if (componentName == null || componentName.isEmpty()
                     || packageName == null || packageName.isEmpty()) {
                 return false;
@@ -141,10 +141,9 @@ public class ToggleAsyncTask extends AsyncTask<List<HashMap<String, Object>>, In
                             "CLASSPATH=/system/framework/pm.jar"},}) {
                 for (int i =0; i<length&&((i==0)^success); ++i){
                     item = info.get(i);
-                    componentName = (String)item.get("componentName");
-                    packageName = (String)item.get("packageName");
-                    enable = (Boolean)item.get("enable");
-
+                    componentName = item.componentName;
+                    packageName = item.packageName;
+                    enable = item.isEnable==1?true:false;
                     Log.d(TAG,componentName+(enable?" enabled":" disbaled"));
                     //Toast.makeText(context,componentName+(enable?" enabled":" disbaled"),Toast.LENGTH_SHORT).show();
                     if (Utils.runRootCommand(String.format(set[0],
