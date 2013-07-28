@@ -206,12 +206,7 @@ public class AutoStartInfo {
                 if (historyStatus == null) {
                     historyStatus = "default";
                 }
-                //appItem.put("historyStatus", historyStatus);
-                //historyList.put(intentFilterInfo.componentInfo.packageInfo.packageName, historyStatus);
-                //appIntentsInfoList = new ArrayList<HashMap<String, Object>>();
-                //appItem.put("intentInfoList", appIntentsInfoList);
                 componentList = new HashMap<String, Boolean>();
-                //appItem.put("componentList", componentList);
                 bootIntent = -1;
                 autoIntent = -1;
             }
@@ -275,26 +270,6 @@ public class AutoStartInfo {
                     }
                 }
             }
-            appIntentsInfo.put("component_name",
-                    intentFilterInfo.componentInfo.componentName);
-//            componentList.put(intentFilterInfo.componentInfo.componentName, intentFilterInfo.componentInfo.currentEnabledState == 2 ? false
-//                    : true);
-            appIntentsInfo.put("package_name",
-                    intentFilterInfo.componentInfo.packageInfo.packageName);
-            appIntentsInfo.put("is_system",
-                    intentFilterInfo.componentInfo.packageInfo.isSystem);
-            appIntentsInfo.put("enable_state",
-                    intentFilterInfo.componentInfo.currentEnabledState == 2 ? 0
-                            : 1);
-            appIntentsInfo.put("default_enabled",
-                    intentFilterInfo.componentInfo.defaultEnabled);
-            appIntentsInfo.put("icon",
-                    intentFilterInfo.componentInfo.packageInfo.icon);
-            appIntentsInfo.put("intentName", intentName);
-            appIntentsInfo.put("display", intentName + "\n"
-                    + intentFilterInfo.componentInfo.componentName);
-            //appIntentsInfoList.add(appIntentsInfo);
-
 
             //////////////////////////////////////////////////////////////////
             intentInfoObject = new IntentInfoObject();
@@ -308,16 +283,6 @@ public class AutoStartInfo {
                     : 1;
             intentInfoObject.intentName = intentName;
             appItemObject.intentInfoObjects.add(intentInfoObject);
-
-
-
-
-
-
-
-
-
-
 
             lastAppName = appName;
         }
@@ -362,72 +327,70 @@ public class AutoStartInfo {
         for (IntentInfoObject intentInfoObject:intentInfoObjects){
             intentInfoObject.isEnable = 0;
         }
-
         ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
         toggleAsyncTask.execute(intentInfoObjects);
-
         return true;
     }
 
-    public boolean blockStrong(HashMap<String, Object> list) {
-        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
-                .get("intentInfoList");
-        List<String> blockIntentsNameList = new ArrayList<String>();
-        for (String[] i : Constants.broadcastActions) {
-            blockIntentsNameList.add(i[0]);
-        }
-        List<String[]> blockComponentList = new ArrayList<String[]>();
-        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            if (blockIntentsNameList.contains((String) mIntentsInfo
-                    .get("intentName"))) {
-                String[] blockComponent = new String[]{
-                        (String) mIntentsInfo.get("component_name"),
-                        (String) mIntentsInfo.get("package_name")};
-                blockComponentList.add(blockComponent);
-            }
-        }
-        for (String[] i : blockComponentList) {
-            setComponentEnable(false, i[0], i[1]);
-        }
+//    public boolean blockStrong(HashMap<String, Object> list) {
+//        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
+//                .get("intentInfoList");
+//        List<String> blockIntentsNameList = new ArrayList<String>();
+//        for (String[] i : Constants.broadcastActions) {
+//            blockIntentsNameList.add(i[0]);
+//        }
+//        List<String[]> blockComponentList = new ArrayList<String[]>();
+//        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
+//            if (blockIntentsNameList.contains((String) mIntentsInfo
+//                    .get("intentName"))) {
+//                String[] blockComponent = new String[]{
+//                        (String) mIntentsInfo.get("component_name"),
+//                        (String) mIntentsInfo.get("package_name")};
+//                blockComponentList.add(blockComponent);
+//            }
+//        }
+//        for (String[] i : blockComponentList) {
+//            setComponentEnable(false, i[0], i[1]);
+//        }
+//
+//
+//        list.put("historyStatus", "blockedStrongly");
+//        Log.d(TAG,"ready??");
+//        historyList.put((String) list.get("package_name"), "blockedStrongly");
+//        saveHistory();
+//        Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
+//                .show();
+//        return true;
+//    }
 
-
-        list.put("historyStatus", "blockedStrongly");
-        Log.d(TAG,"ready??");
-        historyList.put((String) list.get("package_name"), "blockedStrongly");
-        saveHistory();
-        Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
-                .show();
-        return true;
-    }
-
-    public boolean blockGentle(HashMap<String, Object> list) {
-        @SuppressWarnings("unchecked")
-        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
-                .get("intentInfoList");
-        List<String> blockIntentsNameList = new ArrayList<String>();
-        for (String i : Constants.gentleIntentsList) {
-            blockIntentsNameList.add(i);
-        }
-        List<String[]> blockComponentList = new ArrayList<String[]>();
-        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
-            if (blockIntentsNameList.contains((String) mIntentsInfo
-                    .get("intentName"))) {
-                String[] blockComponent = new String[]{
-                        (String) mIntentsInfo.get("component_name"),
-                        (String) mIntentsInfo.get("package_name")};
-                blockComponentList.add(blockComponent);
-            }
-        }
-        for (String[] i : blockComponentList) {
-            setComponentEnable(false, i[0], i[1]);
-        }
-        list.put("historyStatus", "blockedGentlely");
-        historyList.put((String) list.get("package_name"), "blockedGentlely");
-        saveHistory();
-        Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
-                .show();
-        return true;
-    }
+//    public boolean blockGentle(HashMap<String, Object> list) {
+//        @SuppressWarnings("unchecked")
+//        List<HashMap<String, Object>> mIntentsInfoList = (List<HashMap<String, Object>>) list
+//                .get("intentInfoList");
+//        List<String> blockIntentsNameList = new ArrayList<String>();
+//        for (String i : Constants.gentleIntentsList) {
+//            blockIntentsNameList.add(i);
+//        }
+//        List<String[]> blockComponentList = new ArrayList<String[]>();
+//        for (HashMap<String, Object> mIntentsInfo : mIntentsInfoList) {
+//            if (blockIntentsNameList.contains((String) mIntentsInfo
+//                    .get("intentName"))) {
+//                String[] blockComponent = new String[]{
+//                        (String) mIntentsInfo.get("component_name"),
+//                        (String) mIntentsInfo.get("package_name")};
+//                blockComponentList.add(blockComponent);
+//            }
+//        }
+//        for (String[] i : blockComponentList) {
+//            setComponentEnable(false, i[0], i[1]);
+//        }
+//        list.put("historyStatus", "blockedGentlely");
+//        historyList.put((String) list.get("package_name"), "blockedGentlely");
+//        saveHistory();
+//        Toast.makeText(context, "block succesfully", Toast.LENGTH_SHORT)
+//                .show();
+//        return true;
+//    }
 
     private boolean setComponentEnable(boolean enable, String componentName,
                                        String packageName) {

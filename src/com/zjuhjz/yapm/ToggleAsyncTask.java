@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ToggleAsyncTask extends AsyncTask<ArrayList<IntentInfoObject>, Integer, String> {
+public class ToggleAsyncTask extends AsyncTask<ArrayList<IntentInfoObject>, Integer, ArrayList<IntentInfoObject>> {
 
     private Context context = null;
     public String TAG = ProcessList.TAG;
@@ -33,12 +33,12 @@ public class ToggleAsyncTask extends AsyncTask<ArrayList<IntentInfoObject>, Inte
     }
 
     @Override
-    protected void onPostExecute(String i) {
+    protected void onPostExecute(ArrayList<IntentInfoObject> i) {
         linearLayout.setVisibility(View.GONE);
     }
 
     @Override
-    protected String doInBackground(ArrayList<IntentInfoObject>... params) {
+    protected ArrayList<IntentInfoObject> doInBackground(ArrayList<IntentInfoObject>... params) {
         setComponentEnable(params[0]);
         return null;
     }

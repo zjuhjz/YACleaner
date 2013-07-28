@@ -151,13 +151,14 @@ public class AutoStartAppList extends SherlockListFragment implements
             return;
         }
         if (resultCode==1){
-
-
             ArrayList<IntentInfoObject> newIntentInfoObjects = data.getParcelableArrayListExtra("IntentInfoObjects");
             ArrayList<IntentInfoObject> oriIntentInfoObjects = appItemObject.intentInfoObjects;
             ArrayList<IntentInfoObject> modifiedIntentInfoObjects = new ArrayList<IntentInfoObject>();
-            if (newIntentInfoObjects.get(0).packageName!=oriIntentInfoObjects.get(0).packageName)
+            Log.d(TAG,"size:"+newIntentInfoObjects.size());
+            if (!newIntentInfoObjects.get(0).packageName.equals(oriIntentInfoObjects.get(0).packageName))
             {
+                Log.d(TAG,"name:"+newIntentInfoObjects.get(0).packageName);
+                Log.d(TAG,"name:"+oriIntentInfoObjects.get(0).packageName);
                 return;
             }
             for (int i = 0 ; i < newIntentInfoObjects.size(); ++i){
@@ -169,7 +170,7 @@ public class AutoStartAppList extends SherlockListFragment implements
                     modifiedIntentInfoObjects.add(intentInfoObject);
                 }
             }
-
+            Log.d(TAG,"the size:"+modifiedIntentInfoObjects.size());
             ToggleAsyncTask toggleAsyncTask = new ToggleAsyncTask(getActivity());
             toggleAsyncTask.execute(modifiedIntentInfoObjects);
         }
