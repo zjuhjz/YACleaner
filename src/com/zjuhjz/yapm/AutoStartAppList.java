@@ -1,13 +1,7 @@
 package com.zjuhjz.yapm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.zjuhjz.yapm.adapter.AutoStartAppListAdapter;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -135,7 +129,6 @@ public class AutoStartAppList extends SherlockListFragment implements
 		} else if (id == R.id.unblock) {
 			autoStartInfo.unBlockAll(appItemObject.intentInfoObjects);
 		} else if (id == R.id.block_manually){
-
             Intent intent = new Intent(getActivity(),ReceiverList.class);
             intent.putParcelableArrayListExtra("IntentInfoObjects", appItemObject.intentInfoObjects);
             startActivityForResult(intent, 1);
@@ -167,6 +160,7 @@ public class AutoStartAppList extends SherlockListFragment implements
                     intentInfoObject.packageName = newIntentInfoObjects.get(i).packageName;
                     intentInfoObject.componentName = newIntentInfoObjects.get(i).componentName;
                     intentInfoObject.isEnable = newIntentInfoObjects.get(i).isEnable;
+                    oriIntentInfoObjects.get(i).isEnable = newIntentInfoObjects.get(i).isEnable;
                     modifiedIntentInfoObjects.add(intentInfoObject);
                 }
             }

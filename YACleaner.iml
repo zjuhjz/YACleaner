@@ -11,11 +11,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android 4.2.2 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android 4.2.2" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="android-support-v4" level="project" />
-    <orderEntry type="module" module-name="actionbarsherlock" />
-    <orderEntry type="library" name="GoogleAdMobAdsSdk-6.4.1" level="application" />
+    <orderEntry type="library" exported="" name="android-support-v4" level="project" />
+    <orderEntry type="module" module-name="actionbarsherlock" exported="" />
+    <orderEntry type="library" name="GoogleAdMobAdsSdk-6.4.1" level="project" />
   </component>
 </module>
 

@@ -14,10 +14,6 @@ import com.zjuhjz.yapm.R;
 import com.zjuhjz.yapm.db.IntentInfoObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 13-6-20.
@@ -25,19 +21,29 @@ import java.util.Map;
 public class ReceiverListAdapter extends BaseAdapter{
     final String TAG = ProcessList.TAG;
 
+    ArrayList<IntentInfoObject> intentInfoObjectsForDisplay;
     ArrayList<IntentInfoObject> intentInfoObjects;
     LayoutInflater inflater;
     Context context;
     public  ReceiverListAdapter(Context context,ArrayList<IntentInfoObject> intentInfoObjects){
         super();
+        this.intentInfoObjectsForDisplay = new ArrayList<IntentInfoObject>();
         this.intentInfoObjects = intentInfoObjects;
+        String lastName = "";
+        for (IntentInfoObject i:intentInfoObjects){
+            if (lastName.equals(i.componentName))
+                continue;
+            this.intentInfoObjectsForDisplay.add(i);
+        }
+
+
         this.context = context;
         inflater =LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return intentInfoObjects.size();
+        return intentInfoObjectsForDisplay.size();
     }
 
     @Override
@@ -59,12 +65,17 @@ public class ReceiverListAdapter extends BaseAdapter{
         TextView receiverName = (TextView)mView.findViewById(R.id.receiver_name);
         CheckBox receiverStatus = (CheckBox)mView.findViewById(R.id.receiver_checkbox);
 
-        receiverName.setText(intentInfoObjects.get(i).componentName);
-        receiverStatus.setChecked(intentInfoObjects.get(i).isEnable==1?true:false);
+        receiverName.setText(intentInfoObjectsForDisplay.get(i).componentName);
+        receiverStatus.setChecked(intentInfoObjectsForDisplay.get(i).isEnable==1?true:false);
         receiverStatus.setOnCheckedChangeListener(new MyOnCheckedChangeListener(i) {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                intentInfoObjects.get(index).isEnable = b?1:0;
+                String componentName = intentInfoObjectsForDisplay.get(index).componentName;
+                //intentInfoObjectsForDisplay.get(index).isEnable = b?1:0;
+                for (IntentInfoObject i: intentInfoObjects){
+                    if (componentName.equals(i.componentName))
+                    i.isEnable = b?1:0;
+                }
             }
         });
         return mView;
