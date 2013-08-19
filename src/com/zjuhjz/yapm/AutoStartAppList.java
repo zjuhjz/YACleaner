@@ -106,9 +106,17 @@ public class AutoStartAppList extends SherlockListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		arg1.showContextMenu();
+		//arg1.showContextMenu();
+        appItemObject = autoStartInfo.appItemObjects.get(position);
+        showReceivers(appItemObject.intentInfoObjects);
 	}
 
+
+    private void showReceivers(ArrayList<IntentInfoObject> intentInfoObjects){
+        Intent intent = new Intent(getActivity(),ReceiverList.class);
+        intent.putParcelableArrayListExtra("IntentInfoObjects", intentInfoObjects);
+        startActivityForResult(intent, 1);
+    }
 
     @Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
@@ -129,9 +137,10 @@ public class AutoStartAppList extends SherlockListFragment implements
 		} else if (id == R.id.unblock) {
 			autoStartInfo.unBlockAll(appItemObject.intentInfoObjects);
 		} else if (id == R.id.block_manually){
-            Intent intent = new Intent(getActivity(),ReceiverList.class);
-            intent.putParcelableArrayListExtra("IntentInfoObjects", appItemObject.intentInfoObjects);
-            startActivityForResult(intent, 1);
+            //Intent intent = new Intent(getActivity(),ReceiverList.class);
+            //intent.putParcelableArrayListExtra("IntentInfoObjects", appItemObject.intentInfoObjects);
+            //startActivityForResult(intent, 1);
+            showReceivers(appItemObject.intentInfoObjects);
         }
 		autoStartAppListAdapter.notifyDataSetChanged();
         return super.onContextItemSelected(item);

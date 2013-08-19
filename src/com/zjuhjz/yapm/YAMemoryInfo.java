@@ -11,15 +11,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
+import android.os.Debug;
+import android.util.Log;
+import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.zjuhjz.yapm.db.IntentFilterInfo;
 import com.zjuhjz.yapm.db.YAProcessInfo;
 import com.zjuhjz.yapm.tool.*;
 
@@ -36,16 +47,20 @@ public class YAMemoryInfo {
 	private static final String TAG = "yacleanerlog";
 	private static MemoryInfo mi = new MemoryInfo();
 	public List<String> whiteList = new ArrayList<String>();
-	HashMap<String, YAProcessInfo> yaProcessInfoList;
+    private BaseAdapter adapter  = null;
+	HashMap<String, YAProcessInfo> yaProcessInfoMap;
+    List<YAProcessInfo> yaProcessInfos;
+
+    YAMemoryInfoLoadTask yaMemoryInfoLoadTask;
 
 	Context context;
-	List<HashMap<String, Object>> processInfoList;
+//	List<HashMap<String, Object>> processInfoList;
 	List<HashMap<String, String>> servicesInfoList;
 	YAProcessInfo yaProcessInfo;
 	CMDExecute cmdExecute = new CMDExecute();
-
+    List<Integer> pids;
 	YAMemoryInfo(Context context) {
-		processInfoList = new ArrayList<HashMap<String, Object>>();
+//		processInfoList = new ArrayList<HashMap<String, Object>>();
 		servicesInfoList = new ArrayList<HashMap<String, String>>();
 		this.context = context;
 		activityManager = (ActivityManager) context
@@ -53,6 +68,10 @@ public class YAMemoryInfo {
 		loadWhiteList();
 		refresh();
 	}
+
+    public void setAdapter(BaseAdapter adapter){
+        this.adapter = adapter;
+    }
 
 	public boolean refresh() {
 		refreshProcessInfo();
@@ -62,7 +81,7 @@ public class YAMemoryInfo {
 
 	public boolean refreshMemoryInfo() {
 		activityManager.getMemoryInfo(mi);
-		availableMemory = mi.availMem / 1024 / 1024;
+		availableMemory = mi.availMem / (1024 * 1024);
 		return true;
 	}
 
@@ -101,9 +120,7 @@ public class YAMemoryInfo {
 		ApplicationInfo ai;
 
 		PackageManager pm = context.getPackageManager();
-
-		// memory usage
-		HashMap<String, Integer> memoryUsage = new HashMap<String, Integer>();
+        HashMap<Integer, Integer> memoryUsageByid = new HashMap<Integer, Integer>();
 
 		// ///////initialize///////////
 
@@ -111,9 +128,11 @@ public class YAMemoryInfo {
 		if (runningAppProcesses != null) {
 			runningAppProcesses.clear();
 		}
-		if (processInfoList != null) {
-			processInfoList.clear();
-		}
+        if (yaProcessInfos!=null)
+            yaProcessInfos.clear();
+//		if (processInfoList != null) {
+//			processInfoList.clear();
+//		}
 
 		// /////initialize end/////////
 
@@ -121,6 +140,7 @@ public class YAMemoryInfo {
 		 * Use ps command to retrieve memory usage status. Put status into
 		 * memoryUsage HashMap
 		 */
+
 		String result = null;
 		String[] items = null;
 		String[] itempieces;
@@ -137,9 +157,11 @@ public class YAMemoryInfo {
 		for (String item : items) {
 			itempieces = item.trim().split("\\s+");
 			if (itempieces.length > 8) {
-				memoryUsage.put(itempieces[8],
-						Integer.parseInt(itempieces[4]) / 1024);
-			}
+                memoryUsageByid.put(Integer.parseInt(itempieces[1]),
+						Integer.parseInt(itempieces[4])/1024);
+                //Log.d(TAG,itempieces[1]+" "+itempieces[4] );
+
+            }
 
 		}
 
@@ -154,11 +176,13 @@ public class YAMemoryInfo {
 		 */
 		runningAppProcesses = activityManager.getRunningAppProcesses();
 		RunningAppProcessInfo procInfo;
-		yaProcessInfoList = new HashMap<String, YAProcessInfo>();
-
+        pids = new ArrayList<Integer>();
+        yaProcessInfoMap = new HashMap<String, YAProcessInfo>();
+        yaProcessInfos = new ArrayList<YAProcessInfo>();
 		for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
 				.iterator(); iterator.hasNext();) {
 			procInfo = iterator.next();
+            pids.add(procInfo.pid);
 			try {
 				ai = pm.getApplicationInfo(procInfo.pkgList[0], 0);
 			} catch (final NameNotFoundException e) {
@@ -166,8 +190,8 @@ public class YAMemoryInfo {
 			}
 			final String applicationName = (String) (ai != null ? pm
 					.getApplicationLabel(ai) : procInfo.processName);
-			if (yaProcessInfoList.containsKey(ai.packageName)) {
-				yaProcessInfo = yaProcessInfoList.get(ai.packageName);
+			if (yaProcessInfoMap.containsKey(ai.packageName)) {
+				yaProcessInfo = yaProcessInfoMap.get(ai.packageName);
 			} else {
 				yaProcessInfo = new YAProcessInfo();
 				yaProcessInfo.appName = applicationName;
@@ -176,49 +200,36 @@ public class YAMemoryInfo {
 				yaProcessInfo.isWhiteList = whiteList.contains(ai.packageName);
 				yaProcessInfo.icon = ai.loadIcon(pm);
 				yaProcessInfo.isSystemApp = ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
-				yaProcessInfoList.put(yaProcessInfo.packageName, yaProcessInfo);
+                yaProcessInfoMap.put(yaProcessInfo.packageName, yaProcessInfo);
+                yaProcessInfos.add(yaProcessInfo);
+                try {
+                    yaProcessInfo.totalMemoryUsage += (memoryUsageByid.get(procInfo.pid));
+                    //Log.d(TAG,procInfo.pid+":"+yaProcessInfo.totalMemoryUsage+"added"+memoryUsageByid.get(procInfo.pid));
+                } catch (Exception e) {
+                    yaProcessInfo.totalMemoryUsage += 0;
+                }
 			}
-
 			yaProcessInfo.pid.add(procInfo.pid);
 			yaProcessInfo.processNameList.add(procInfo.processName);
-			try {
-				yaProcessInfo.totalMemoryUsage += memoryUsage
-						.get(procInfo.processName);
-			} catch (Exception e) {
-				yaProcessInfo.totalMemoryUsage += 0;
-			}
 		}
 
-		/*
-		 * As the ArrayListAdapter needs arrayList,so we choose the data we need
-		 * to display on the list into yaProcessInfoList from yaProcessInfoList.
-		 * So yaProcessInfoList is the data source. These code are shit. We need
-		 * to fix. We should choose a better adapter.
-		 */
-		YAProcessInfo yaProcessInfo;
-		// add info to processInfoList
-		for (Map.Entry<String, YAProcessInfo> entry : yaProcessInfoList
-				.entrySet()) {
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			yaProcessInfo = entry.getValue();
-			map.put("app_name", yaProcessInfo.appName);
-			map.put("package_name", yaProcessInfo.packageName);
-			// map.put("pid", yaProcessInfo.pid + "");
-			map.put("memory_usage", yaProcessInfo.totalMemoryUsage + "MB");
-			map.put("whitelist", yaProcessInfo.isWhiteList ? "1" : "0");
-            map.put("whitelist_label",yaProcessInfo.isWhiteList ? "white list" : "");
-			// TODO add a filter
-			map.put("is_system_app", yaProcessInfo.isSystemApp ? "1" : "0");
-			map.put("icon", yaProcessInfo.icon);
-			processInfoList.add(map);
-		}
-		Collections.sort(processInfoList, new ComparatorProcessList());
+		Collections.sort(yaProcessInfos, new ComparatorProcessList());
+        if (memoryUsageByid.size()<2){
+            if (yaMemoryInfoLoadTask==null)
+            {
+                yaMemoryInfoLoadTask = new YAMemoryInfoLoadTask(pm);
+                yaMemoryInfoLoadTask.execute();
+            }
+            else {
+                if (yaMemoryInfoLoadTask.getStatus()!=YAMemoryInfoLoadTask.Status.RUNNING){
+                    yaMemoryInfoLoadTask = new YAMemoryInfoLoadTask(pm);
+                    yaMemoryInfoLoadTask.execute();
+                }
+            }
+        }
 		return runningAppProcesses.size();
 	}
 
-    public void refreshDisplayInfo(){
-
-    }
 	public boolean addToWhiteList(String packageName) {
 		if (!whiteList.contains(packageName)) {
 			whiteList.add(packageName);
@@ -238,11 +249,9 @@ public class YAMemoryInfo {
 	private boolean saveWhiteList() {
 		StringBuffer fileContent = new StringBuffer("");
 		HashMap<String, Object> procInfo;
-		for (Iterator<HashMap<String, Object>> iterator = processInfoList
-				.iterator(); iterator.hasNext();) {
-			procInfo = iterator.next();
-			if (procInfo.get("whitelist") == "1") {
-				fileContent.append(procInfo.get("package_name") + "\n");
+		for (YAProcessInfo i: yaProcessInfos) {
+			if (i.isWhiteList) {
+				fileContent.append(i.packageName + "\n");
 			}
 		}
 		try {
@@ -259,15 +268,9 @@ public class YAMemoryInfo {
 	}
 
 	public void killProcesses(int option) {
-		ActivityManager activityManager = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
-		HashMap<String, Object> processitem;
 		String packageName;
-		for (Iterator<HashMap<String, Object>> iterator = processInfoList
-				.iterator(); iterator.hasNext();) {
-			processitem = iterator.next();
-			packageName = (String) processitem.get("package_name");
-			//Log.d(TAG, packageName);
+		for (YAProcessInfo i : yaProcessInfos) {
+			packageName =  i.packageName;
 			if (whiteList.contains(packageName)&&option==YAMemoryInfo.KILL_PROCESSES_EXCEPT_WHITELIST) {
 				continue;
 			}
@@ -276,19 +279,90 @@ public class YAMemoryInfo {
 	}
 	
 	public boolean killProcess(int position){
-		if(processInfoList!=null){
-			HashMap<String, Object> processitem = processInfoList.get(position);
-			String packageName =   (String) processitem.get("package_name");
-			String appName =   (String) processitem.get("app_name");
+		if(yaProcessInfos!=null){
+			YAProcessInfo item = yaProcessInfos.get(position);
+			String packageName = item.packageName;
+			String appName = item.appName;
 			activityManager.killBackgroundProcesses(packageName);
 			/*
 			 * Fakely remove the listItem.
 			 */
-			yaProcessInfoList.remove(packageName);
-			processInfoList.remove(position);
+            yaProcessInfoMap.remove(packageName);
+            yaProcessInfos.remove(position);
 			Toast.makeText(context, appName+" killed", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return false;
 	}
+    public class YAMemoryInfoLoadTask extends AsyncTask<Void, Integer, Integer> {
+        ApplicationInfo ai;
+        PackageManager pm;
+        YAMemoryInfoLoadTask(PackageManager pm ){
+            this.pm = pm;
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+            HashMap<Integer, Integer> memoryUsageByid = new HashMap<Integer, Integer>();
+
+            yaProcessInfoMap = new HashMap<String, YAProcessInfo>();
+            RunningAppProcessInfo procInfo;
+            //
+            int[] ints = new int[pids.size()];
+            int k = 0;
+
+            Log.d(TAG,"start get list");
+            for (Integer i : pids){
+                ints[k++] = i.intValue();
+            }
+            Debug.MemoryInfo[] memoryInfos = activityManager.getProcessMemoryInfo(ints);
+            k = 0;
+            for (Debug.MemoryInfo memoryInfo:memoryInfos){
+                if (memoryInfo!=null){
+                    memoryUsageByid.put(ints[k++], memoryInfo.getTotalPrivateDirty()/1024);
+                }
+                else{
+                    memoryUsageByid.put(ints[k++],0);
+                }
+            }
+            Log.d(TAG,"list got");
+            for (Iterator<RunningAppProcessInfo> iterator = runningAppProcesses
+                    .iterator(); iterator.hasNext();) {
+                procInfo = iterator.next();
+                try {
+                    ai = pm.getApplicationInfo(procInfo.pkgList[0], 0);
+                } catch (final NameNotFoundException e) {
+                    ai = null;
+                }
+                if (yaProcessInfoMap.containsKey(ai.packageName)) {
+                    yaProcessInfo = yaProcessInfoMap.get(ai.packageName);
+                    yaProcessInfo.pid.add(procInfo.pid);
+                    yaProcessInfo.processNameList.add(procInfo.processName);
+                    try {
+                        yaProcessInfo.totalMemoryUsage += memoryUsageByid.get(procInfo.pid);
+                    } catch (Exception e) {
+                        yaProcessInfo.totalMemoryUsage += 0;
+                    }
+                }
+                publishProgress();
+            }
+            Log.d(TAG,"refreshed");
+            return 0;
+        }
+
+        protected void onPostExecute(Integer v) {
+
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            adapter.notifyDataSetChanged();
+        }
+
+
+    }
 }

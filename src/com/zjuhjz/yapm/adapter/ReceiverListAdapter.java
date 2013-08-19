@@ -1,6 +1,7 @@
 package com.zjuhjz.yapm.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class ReceiverListAdapter extends BaseAdapter{
     final String TAG = ProcessList.TAG;
 
-    ArrayList<IntentInfoObject> intentInfoObjectsForDisplay;
+    ArrayList<IntentInfoObject> intentInfoObjectsForDisplay; // remove duplicated item
     ArrayList<IntentInfoObject> intentInfoObjects;
     LayoutInflater inflater;
     Context context;
@@ -34,6 +35,7 @@ public class ReceiverListAdapter extends BaseAdapter{
             if (lastName.equals(i.componentName))
                 continue;
             this.intentInfoObjectsForDisplay.add(i);
+            lastName = i.componentName;
         }
 
 
@@ -64,14 +66,16 @@ public class ReceiverListAdapter extends BaseAdapter{
         }
         TextView receiverName = (TextView)mView.findViewById(R.id.receiver_name);
         CheckBox receiverStatus = (CheckBox)mView.findViewById(R.id.receiver_checkbox);
-
+        receiverStatus.setOnCheckedChangeListener(null);
         receiverName.setText(intentInfoObjectsForDisplay.get(i).componentName);
-        receiverStatus.setChecked(intentInfoObjectsForDisplay.get(i).isEnable==1?true:false);
+        receiverStatus.setChecked(intentInfoObjectsForDisplay.get(i).isEnable == 1 ? true : false);
+        Log.d(TAG,intentInfoObjectsForDisplay.get(i).componentName+":"+intentInfoObjectsForDisplay.get(i).isEnable);
         receiverStatus.setOnCheckedChangeListener(new MyOnCheckedChangeListener(i) {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
                 String componentName = intentInfoObjectsForDisplay.get(index).componentName;
-                //intentInfoObjectsForDisplay.get(index).isEnable = b?1:0;
+                intentInfoObjectsForDisplay.get(index).isEnable = b?1:0;
                 for (IntentInfoObject i: intentInfoObjects){
                     if (componentName.equals(i.componentName))
                     i.isEnable = b?1:0;

@@ -25,6 +25,7 @@ import com.actionbarsherlock.view.Menu;
 
 
 import com.zjuhjz.yapm.adapter.ProcessListAdapter;
+import com.zjuhjz.yapm.db.YAProcessInfo;
 
 import java.util.HashMap;
 
@@ -35,7 +36,7 @@ public class ProcessList extends SherlockListFragment implements OnItemClickList
 	YAMemoryInfo yaMemoryInfo;
 	static final int REFRESH_ID = Menu.FIRST;
 	static final int CLEAR_ID = Menu.FIRST + 1;
-	ProcessListAdapter simpleAdapter;
+	ProcessListAdapter processListAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class ProcessList extends SherlockListFragment implements OnItemClickList
 						for (int position : reverseSortedPositions) {
 							yaMemoryInfo.killProcess(position);
 						}
-						simpleAdapter.notifyDataSetChanged();
+						processListAdapter.notifyDataSetChanged();
 					}
 				});
 		listView.setOnTouchListener(touchListener);
@@ -83,9 +84,8 @@ public class ProcessList extends SherlockListFragment implements OnItemClickList
 		inflater.inflate(R.menu.processlist_contextmenu, menu);
         android.view.MenuItem menuItem = menu.getItem(0);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		HashMap<String, Object> processInfo = yaMemoryInfo.processInfoList
-				.get(info.position);
-		if (processInfo.get("whitelist") == "0") {
+		YAProcessInfo processInfo = yaMemoryInfo.yaProcessInfos.get(info.position);
+		if (!processInfo.isWhiteList) {
 			menuItem.setTitle(getResources().getString(
 					R.string.process_addto_whitelist));
 		} else {
@@ -102,27 +102,26 @@ public class ProcessList extends SherlockListFragment implements OnItemClickList
 		if (id == R.id.process_addto_whitelist) {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 					.getMenuInfo();
-			HashMap<String, Object> processInfo = yaMemoryInfo.processInfoList
+			YAProcessInfo yaProcessInfo= yaMemoryInfo.yaProcessInfos
 					.get(info.position);
-			if (processInfo.get("whitelist") == "0") {
-				processInfo.put("whitelist", "1");
-				yaMemoryInfo.addToWhiteList((String) processInfo
-						.get("package_name"));
+			if (!yaProcessInfo.isWhiteList) {
+                yaProcessInfo.isWhiteList=true;
+				yaMemoryInfo.addToWhiteList(yaProcessInfo
+						.packageName);
 			} else {
-				processInfo.put("whitelist", "0");
-				yaMemoryInfo.removeFromWhiteList((String) processInfo
-						.get("package_name"));
+                yaProcessInfo.isWhiteList=false;
+				yaMemoryInfo.removeFromWhiteList(yaProcessInfo.packageName);
 			}
 		}
         else if (id == R.id.process_detail){
             AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            String packageName = (String)yaMemoryInfo.processInfoList.get(info.position).get("package_name");
+            String packageName = (String)yaMemoryInfo.yaProcessInfos.get(info.position).packageName;
             Uri uri = Uri.fromParts("package", packageName, null);
             intent.setData(uri);
             startActivity(intent);
         }
-		simpleAdapter.notifyDataSetChanged();
+		processListAdapter.notifyDataSetChanged();
 		return super.onContextItemSelected(item);
 	}
 
@@ -176,16 +175,16 @@ public class ProcessList extends SherlockListFragment implements OnItemClickList
 		yaMemoryInfo.refresh();
 
 		// TODO improve "string from"
-		simpleAdapter = new ProcessListAdapter(context,
-				yaMemoryInfo.processInfoList, R.layout.process_list_item,
-				new String[] { "app_name", "memory_usage","whitelist_label" }, new int[] {
-						R.id.process_name, R.id.process_memory,R.id.whitelist_label });
-		setListAdapter(simpleAdapter);
+		processListAdapter = new ProcessListAdapter(context,
+				yaMemoryInfo.yaProcessInfos);
+        yaMemoryInfo.setAdapter(processListAdapter);
+
+		setListAdapter(processListAdapter);
 		TextView textview = (TextView) getView().findViewById(
 				R.id.total_process_num);
 
 		textview.setText("Process Num: "
-				+ Integer.toString(yaMemoryInfo.processInfoList.size())
+				+ Integer.toString(yaMemoryInfo.yaProcessInfos.size())
 				+ "\nfree RAM:" + yaMemoryInfo.availableMemory + " MB");
 	}
 

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 //TODO optimize AutoStartInfo data structure.change 
-//     <HashMap<String, Object>intentsAppInfoList to class object
 public class AutoStartInfo {
     // all broadcast Actions
     public final static int NON_EXSISTS = -1;
@@ -61,80 +60,21 @@ public class AutoStartInfo {
     ArrayList<IntentFilterInfo> info = null;
 
     private boolean includeSystem = false;
-    final private static String HISTORY_FILE_NAME = "blockHistory";
     HashMap<String, String> historyList;
-
 
     AutoStartInfo(Context context) {
         this.context = context;
         intentsInfoList = new ArrayList<HashMap<String, Object>>();
-        //appInfoList = new ArrayList<HashMap<String, Object>>();
         appItemObjects = new ArrayList<AppItemObject>();
         includeSystem = false;
         packageManager = context.getPackageManager();
         historyList = new HashMap<String, String>();
-        loadHistory();
         refresh();
     }
 
     private void loadReceiverReader() {
         AutostartInfoLoadTask autostartInfoLoadTask = new AutostartInfoLoadTask();
         autostartInfoLoadTask.execute();
-    }
-
-    public boolean loadHistory() {
-        try {
-            FileInputStream fileInputStream = context
-                    .openFileInput(HISTORY_FILE_NAME);
-            byte[] buffer = new byte[1024];
-            StringBuffer fileContent = new StringBuffer("");
-            while (fileInputStream.read(buffer) != -1) {
-                fileContent.append(new String(buffer));
-            }
-            String data = new String(fileContent);
-            String[] dataList = data.split("\n");
-            String[] dataItem;
-
-            for (String i : dataList) {
-                dataItem = i.split(" ");
-                if (dataItem.length == 2) {
-                    historyList.put(dataItem[0], dataItem[1]);
-                }
-            }
-            fileInputStream.close();
-        } catch (FileNotFoundException e) {
-            try {
-                FileOutputStream fileOutputStream = context.openFileOutput(
-                        HISTORY_FILE_NAME, 0);
-                fileOutputStream.close();
-            } catch (FileNotFoundException e1) {
-                // TODO Auto-generated catch block
-                // e1.printStackTrace();
-            } catch (IOException e2) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
-            }
-        } catch (IOException e) {
-            // e.printStackTrace();
-        }
-        return true;
-    }
-
-    private boolean saveHistory(){
-        StringBuffer fileContent = new StringBuffer("");
-        for (Map.Entry<String, String> entry : historyList.entrySet()) {
-            fileContent.append(entry.getKey() + " " + entry.getValue() + "\n");
-        }
-        try {
-            FileOutputStream fileOutputStream = context.openFileOutput(
-                    HISTORY_FILE_NAME, Context.MODE_PRIVATE);
-            fileOutputStream.write(fileContent.toString().getBytes());
-        } catch (FileNotFoundException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
     }
 
     private void refreshListDataSource() {
@@ -149,7 +89,6 @@ public class AutoStartInfo {
                 return 0;
             }
         });
-        //appInfoList.clear();
         appItemObjects.clear();
 
 
@@ -157,7 +96,6 @@ public class AutoStartInfo {
 
         String appName;
         String lastAppName = "";
-        String historyStatus;
         AppItemObject appItemObject = null;
         IntentInfoObject intentInfoObject;
         int bootIntent = 0;
@@ -194,18 +132,6 @@ public class AutoStartInfo {
                 appItemObject.intentInfoObjects = new ArrayList<IntentInfoObject>();
                 //////////////////////////////////////////////////////////////////////////
 
-                /*appItem = new HashMap<String, Object>();
-                appInfoList.add(appItem);
-                appItem.put("appName", appName);
-                appItem.put("appIcon",
-                        intentFilterInfo.componentInfo.packageInfo.icon);
-                appItem.put("package_name",
-                        intentFilterInfo.componentInfo.packageInfo.packageName);*/
-                historyStatus = historyList
-                        .get(intentFilterInfo.componentInfo.packageInfo.packageName);
-                if (historyStatus == null) {
-                    historyStatus = "default";
-                }
                 componentList = new HashMap<String, Boolean>();
                 bootIntent = -1;
                 autoIntent = -1;
@@ -286,13 +212,8 @@ public class AutoStartInfo {
 
             lastAppName = appName;
         }
-//        if (appItem!=null){
-//            appItem.put("bootIntent",bootIntent);
-//            appItem.put("autoIntent",autoIntent);
-//        }
         //info.clear();
         //info = null;
-        saveHistory();
     }
 
     public void refresh() {
@@ -317,8 +238,6 @@ public class AutoStartInfo {
             intentInfoObject.isEnable = 1;
         }
         ToggleAsyncTask  toggleAsyncTask = new ToggleAsyncTask(context);
-        toggleAsyncTask.execute(intentInfoObjects);
-        saveHistory();
         return true;
     }
 
@@ -354,7 +273,7 @@ public class AutoStartInfo {
         }
     }
 
-    public class AutostartInfoLoadTask extends AsyncTask<Void, Integer, Void> {
+    public class AutostartInfoLoadTask extends AsyncTask<Void, Integer, Integer> {
         //TextView textView;
         LinearLayout linearLayout;
         ProgressBar progressBar;
@@ -367,7 +286,7 @@ public class AutoStartInfo {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Integer doInBackground(Void... params) {
             // TODO Auto-generated method stub
 //			if(textView==null){
 //				textView = (TextView)((Activity)context).findViewById(R.id.loading);
@@ -381,10 +300,10 @@ public class AutoStartInfo {
                 }
             });
             info = receiverReader.load();
-            return null;
+            return 1;
         }
 
-        protected void onPostExecute(ArrayList<IntentFilterInfo> i) {
+        protected void onPostExecute(Integer v) {
             refreshListDataSource();
             linearLayout.setVisibility(View.GONE);
         }
